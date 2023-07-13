@@ -1,4 +1,4 @@
-typer>=0.90
+typer
 sqlalchemy>=2.0.15
 mariadb>=1.1.6
 

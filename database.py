@@ -9,12 +9,11 @@ DB_Container_Name="localhost"
 
 Base = declarative_base()
 
-class User(Base):
-    __tablename__ = "user"
+class users2(Base):
+    __tablename__ = "users2"
     id = Column(Integer, primary_key=True)
-    name = Column(String)
-    password = Column(String)
-    secret_base32 = Column(String)
+    username = Column(String)
+    password_hashed = Column(String)
 
 def start_a_db_session(
     DB_Username_For_Admin:str,
@@ -26,5 +25,7 @@ def start_a_db_session(
     return Session()
 
 def get_user_name(session):
-    user = session.query(User).first()
+    print("1")
+    user = session.query(users2).first()
+    pritn("2")
     return user
