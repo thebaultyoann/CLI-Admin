@@ -22,10 +22,49 @@ def login(name: str, password: Annotated[str, typer.Option(prompt=True, hide_inp
 def get_user_name():
     name=os.getenv('name')  
     password=os.getenv('password')
-    session=database.start_a_db_session(name,password,"astrolabium")
+    session=database.start_a_db_session(
+        DB_Username_For_Admin=name,
+        DB_Password_For_Admin=password,
+        DB_Name_For_Admin_User="astrolabium",
+        DB_Container_Name="localhost"
+        )
     user = database.get_user_name(session)
-    print(user.username)
-    return
-    
+    return print(user.username)
+
+@app.command(name="user")
+def user() -> None:
+    name=os.getenv('name')  
+    password=os.getenv('password')
+    session=database.start_a_db_session(
+        DB_Username_For_Admin=name,
+        DB_Password_For_Admin=password,
+        DB_Name_For_Admin_User="astrolabium",
+        DB_Container_Name="localhost"
+        )
+    users = database.get_all_users(session)
+    if len(users) == 0:
+        typer.secho(
+            "There are no users in the database yet", fg=typer.colors.RED
+        )
+        raise typer.Exit()
+    typer.secho("\nUser list:\n", fg=typer.colors.BLUE, bold=True)
+    columns = (
+        "ID.  ",
+        "| Username  ",
+        "| Disabled  ",
+    )
+    headers = "".join(columns)
+    typer.secho(headers, fg=typer.colors.BLUE, bold=True)
+    typer.secho("-" * len(headers), fg=typer.colors.BLUE)
+    for id, user in enumerate(users, 1):
+        username, disabled = user.values()
+        typer.secho(
+            f"{id}{(len(columns[0]) - len(str(id))) * ' '}"
+            f"| ({username}){(len(columns[1]) - len(str(username)) - 4) * ' '}"
+            f"| {disabled}{(len(columns[2]) - len(str(disabled)) - 2) * ' '}",   
+            fg=typer.colors.BLUE,
+        )
+    typer.secho("-" * len(headers) + "\n", fg=typer.colors.BLUE)
+
 if __name__ == "__main__":
     app()
