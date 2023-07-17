@@ -40,7 +40,7 @@ def user_delete_command(username:str) -> None:
     user_delete(session=session, username=username)
 
 @user_app.command('update')
-def user_update_command(username:str, newPassword: Annotated[str, typer.Option(hide_input=True)]=None, deactivate: Annotated[bool, typer.Option()]=None, newUsername:Annotated[str, typer.Option()]=None) -> None:
+def user_update_command(username:str, newPassword: Annotated[str, typer.Option(prompt=False, hide_input=True)]=None, deactivate: Annotated[bool, typer.Option()]=None, newUsername:Annotated[str, typer.Option()]=None) -> None:
     session = connect_to_db()
     user_update(session=session, username=username, newUsername = newUsername, password=newPassword, disabled=deactivate)
         
@@ -73,7 +73,7 @@ def user_update(session, username:str, newUsername:str, password:str,  disabled:
         typer.secho(f"User {username} password has been changed", fg=typer.colors.GREEN)
     if "3" in code :  
         typer.secho(f"User {username} is now {newUsername}", fg=typer.colors.GREEN)
-    else :
+    else if not "1" or "2" or "3" in code :
         typer.secho(f"Unsuccesfull modficiation of the user {username}", fg=typer.colors.RED)
 
 def user_activate(session, username:str):
