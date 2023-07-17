@@ -73,7 +73,7 @@ def update_user(session, username, newUsername, password, disabled):
         session.commit()
         return code
     else:
-        return False
+        return code
 
 def activate_user(session, username):
     user = session.query(User).filter(User.username == username).first()
