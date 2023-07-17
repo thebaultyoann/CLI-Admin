@@ -10,6 +10,8 @@ import database
 resource.setrlimit(resource.RLIMIT_CORE, (0, 0))  #to activated when going to production. Stop the authenticated_user from being shown when core dump happens
 
 app = typer.Typer()
+user_app = typer.Typer()
+app.add_typer(user_app, name="user")
 
 import os
 
@@ -115,5 +117,3 @@ def user_delete(session, username:str):
 
 if __name__ == "__main__":
     app = typer.Typer()
-    user_app = typer.Typer()
-    app.add_typer(user_app, name="user")
