@@ -59,8 +59,8 @@ def user_update_command(
             hide_input=True)
         ]=None, 
     deactivate: Annotated[bool, typer.Option(
-            "--deactivate",
-            "-d")
+            "--deactivate/--activate",
+            "-d/-a")
         ]=None
 ) -> None:
     session = connect_to_db()
