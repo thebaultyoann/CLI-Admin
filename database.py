@@ -61,7 +61,7 @@ def update_user(session, username, newUsername, password, disabled):
     code=[]
     if user:
         print(disabled)
-        if disabled===bool:
+        if disabled==False or disabled==True:
             user.disabled = disabled
             code.append("1")
         if password:
