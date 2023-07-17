@@ -65,8 +65,8 @@ def connect_to_db():
         )
     return session
 
-def user_update(session, username:str, password:str, disabled:bool):
-    code = database.update_user(session=session, username=username, password=password, disabled=disabled)
+def user_update(session, username:str, newUsername:str, password:str,  disabled:bool):
+    code = database.update_user(session=session, username=username, newUsername=newUsername, password=password, disabled=disabled)
     if "1" in code :
         return typer.secho(f"User {username} disabled state is now {disabled}", fg=typer.colors.GREEN)
     if "2" in code : 
