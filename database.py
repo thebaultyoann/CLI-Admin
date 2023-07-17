@@ -37,6 +37,15 @@ def get_a_single_user(session, username):
 def get_users_by_activation(session,status):
     return session.query(User).filter((User.disabled == status)).all()
 
+def delete_user(session, username):
+    user = session.query(User).filter(User.username == username).first()
+    if user:
+        session.delete(user)
+        session.commit()
+        return user
+    else:
+        return None
+
 def get_datadays(session):
     return session.query(DataDay).all()
 
