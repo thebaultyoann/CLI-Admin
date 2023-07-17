@@ -72,12 +72,12 @@ def user_update(session, username:str, password:str, disabled:bool):
         return typer.secho(f"User {username} was added to the database and his disabled state is {disabled}", fg=typer.colors.GREEN)
     return typer.secho(f"Unsuccesfull add of the user {username}", fg=typer.colors.RED)
 
-def user_activate(session, username:str)
+def user_activate(session, username:str):
     if database.activate_user(session=session, username=username)
         return typer.secho(f"User {username} was activated")
     return typer.secho(f"Unsuccesfull activation of the user {username}", fg=typer.colors.RED)
 
-def user_deactivate(session, username:str)
+def user_deactivate(session, username:str):
     if database.deactivate_user(session=session, username=username)
         return typer.secho(f"User {username} was deactivated")
     return typer.secho(f"Unsuccesfull deactivation of the user {username}", fg=typer.colors.RED)
