@@ -40,7 +40,7 @@ def user_delete_command(username:str) -> None:
     user_delete(session=session, username=username)
 
 @user_app.command('update')
-def user_update_command(username:str, newPassword: Annotated[bool, typer.Option(hide_input=True)]="", newState: Annotated[bool, typer.Option()]="", newUsername:Annotated[str, typer.Option()]="") -> None:
+def user_update_command(username:str, newPassword: Annotated[bool, typer.Option(hide_input=True)]=None, newState: Annotated[bool, typer.Option()]=None, newUsername:Annotated[str, typer.Option()]=None) -> None:
     session = connect_to_db()
     if newUsername:
         username=newUsername
