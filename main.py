@@ -56,7 +56,7 @@ def user_deactivate_command(username:str) -> None:
     session = connect_to_db()
     user_deactivate(session=session, username=username)
 
-def connect_to_db():
+def connect_to_db():Optional
     name=os.getenv('name')  
     password=os.getenv('password')
     session=database.start_a_db_session(

@@ -65,7 +65,7 @@ def update_user(session, username, password, disabled):
             user.password_hashed = password
         if disabled:
             user.disabled = disabled
-        session.add(new_user)
+        session.add(user)
         session.commit()
         return True
     else:
@@ -73,16 +73,20 @@ def update_user(session, username, password, disabled):
 
 def activate_user(session, username):
     user = session.query(User).filter(User.username == username).first()
-    if user:
+    if user.disabed = False:
         user.disabled = True
+        session.add(user)
+        session.commit()
         return True
     else:
         return False
 
 def deactivate_user(session, username):
     user = session.query(User).filter(User.username == username).first()
-    if user:
+    if user.disabled = True:
         user.disabled = False
+        session.add(user)
+        session.commit()
         return True
     else:
         return False
