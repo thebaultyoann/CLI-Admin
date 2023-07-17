@@ -19,16 +19,16 @@ def login(name: str, password: Annotated[str, typer.Option(prompt=True, hide_inp
     os.putenv('password',f'{password}')
     os.system('bash')
 
+@user_app.command("list")
+def user(command:str) -> None:
+    session = connect_to_db()
+    user_list(session=session)
+
 @user_app.command('get')
 def get_user(command:str) -> None:
     session = connect_to_db()
     user_get(session=session, name=name)
     return print(user.username)
-
-@user_app.command("list")
-def user(command:str) -> None:
-    session = connect_to_db()
-    user_list(session=session)
         
 @user_app.command("add")
 def user(command:str) -> None:
@@ -116,4 +116,4 @@ def user_delete(session, username:str):
 if __name__ == "__main__":
     app = typer.Typer()
     user_app = typer.Typer()
-    app.add_typer(items_app, name="user")
+    app.add_typer(user_app, name="user")
