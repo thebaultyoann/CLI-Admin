@@ -56,19 +56,22 @@ def add_user(session, username, password, disabled):
         session.commit()
         return True
 
-def update_user(session, username, newUsername, password):
+def update_user(session, username, newUsername, password, disabled):
     user = session.query(User).filter(User.username == username).first()
     code=[]
     if user:
+        if disabled:
+            user.disabled = disabled
+            code.append("1")
         if password:
             user.password_hashed = password
-            code.append("1")
+            code.append("2")
         if newUsername:
             user.username = newUsername
-            code.append("2")
+            code.append("3")
         session.add(user)
         session.commit()
-        return True
+        return code
     else:
         return False
 
