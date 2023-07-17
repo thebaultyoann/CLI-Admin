@@ -44,7 +44,7 @@ def user_update_command(username:str, newPassword: Annotated[bool, typer.Option(
     session = connect_to_db()
     if newUsername:
         username=newUsername
-    user_update(session=session, username=username, password=password, disabled=disabled)
+    user_update(session=session, username=username, password=newPassword, disabled=newDisabled)
         
 @user_app.command('activate')
 def user_activate_command(username:str) -> None:
