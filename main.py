@@ -73,7 +73,7 @@ def user_update(session, username:str, newUsername:str, password:str,  disabled:
         typer.secho(f"User {username} password has been changed", fg=typer.colors.GREEN)
     if "3" in code :  
         typer.secho(f"User {username} is now {newUsername}", fg=typer.colors.GREEN)
-    if (not "1" in code) or (not "2" in code) or (not "3" in code) :
+    if (not "1" in code) and (not "2" in code) and (not "3" in code) :
         typer.secho(f"Unsuccesfull modficiation of the user {username}", fg=typer.colors.RED)
 
 def user_activate(session, username:str):
