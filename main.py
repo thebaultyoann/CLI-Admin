@@ -13,34 +13,32 @@ app = typer.Typer()
 user_app = typer.Typer()
 app.add_typer(user_app, name="user")
 
-import os
-
 @app.command("login")
-def login(name: str, password: Annotated[str, typer.Option(prompt=True, hide_input=True)]): 
+def login(name: str, password: Annotated[str, typer.Argument(prompt=True, hide_input=True)]): 
     os.putenv('name',f'{name}')
     os.putenv('password',f'{password}')
     os.system('bash')
 
 @user_app.command("list")
-def user(command:str) -> None:
+def user(None) -> None:
     session = connect_to_db()
     user_list(session=session)
 
-@user_app.command('get')
-def get_user(command:str) -> None:
+@user_app.command('add')
+def get_user(username:str, password : Annotated[str, typer.Argument(prompt=True, hide_input=True)], disabled = Annotated[bool, typer.Argument(prompt=True, default=False)]) -> None:
     session = connect_to_db()
-    user_get(session=session, name=name)
+    user_add(session=session, username=username, password=password, disabled=disabled)
     return print(user.username)
         
-@user_app.command("add")
-def user(command:str) -> None:
+@user_app.command("get")
+def user(username:str) -> None:
     session = connect_to_db()
-    user_add(session=session, username=command)
+    user_get(session=session, username=username)
 
 @user_app.command("delete")
-def user(command:str) -> None:
+def user(username:str) -> None:
     session = connect_to_db()
-    user_delete(session=session, username=command)
+    user_delete(session=session, username=username)
 
 
 def connect_to_db():
@@ -82,6 +80,11 @@ def user_list(session):
     typer.secho("-" * len(headers) + "\n", fg=typer.colors.BLUE)
     return True
 
+def user_add(session, username:str, password:str, disabled:bool):
+    if database.add_user(session=session, username=username, password=password, disabled=disabled):
+        return typer.secho(f"User {username} was added to the database and his disabled state is {distabled}")
+    return typer.secho(f"Unsuccesfull add of the user {username}")
+
 def user_get(session, username:str):
     user = database.get_a_single_user(session=session, username=username)
     if len(user) == 0:
@@ -109,7 +112,7 @@ def user_get(session, username:str):
     return True
 
 def user_delete(session, username:str):
-    user = database.user_delete(session=session, username=username)
+    user = database.delete_user(session=session, username=username)
     if user:
         typer.secho(f"User {user.username} have been delete")
     else: 

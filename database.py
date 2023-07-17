@@ -46,6 +46,18 @@ def delete_user(session, username):
     else:
         return None
 
+def add_user(session, username, password, disabled):
+    user = session.query(User).filter(User.username == username).first()
+    if user:
+        return False
+    else:
+        new_user = User(username=username, password=password, disabled=disabled)
+        session.add(new_user)
+        session.commit()
+        return True
+
+        
+
 def get_datadays(session):
     return session.query(DataDay).all()
 
