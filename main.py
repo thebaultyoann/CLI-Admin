@@ -14,7 +14,10 @@ user_app = typer.Typer()
 app.add_typer(user_app, name="user")
 
 @app.command("login")
-def login(name: str, password: Annotated[str, typer.Option(prompt=True, hide_input=True)]): 
+def login(
+    name: str, 
+    password: Annotated[str, typer.Option(prompt=True, hide_input=True)]
+) -> None: 
     os.putenv('name',f'{name}')
     os.putenv('password',f'{password}')
     os.system('bash')
@@ -25,7 +28,11 @@ def user() -> None:
     user_list(session=session)
 
 @user_app.command('add')
-def user_add_command(username:str, password: Annotated[str, typer.Option(prompt=True, hide_input=True)], disabled: Annotated[bool, typer.Argument()]=False) -> None:
+def user_add_command(
+    username:str, 
+    password: Annotated[str, typer.Option(prompt=True, hide_input=True)], 
+    disabled: Annotated[bool, typer.Argument()]=False
+) -> None:
     session = connect_to_db()
     user_add(session=session, username=username, password=password, disabled=disabled)
         
@@ -40,7 +47,22 @@ def user_delete_command(username:str) -> None:
     user_delete(session=session, username=username)
 
 @user_app.command('update')
-def user_update_command(username:str, newPassword: Annotated[str, typer.Option("-pw", hide_input=True)]=None, deactivate: Annotated[bool, typer.Option("-d")]=None, newUsername:Annotated[str, typer.Option("-u")]=None) -> None:
+def user_update_command(
+    username:str, 
+    newPassword: Annotated[str, typer.Option(
+            "--newpassword"
+            "-pw", 
+            hide_input=True)
+        ]=None, 
+    deactivate: Annotated[bool, typer.Option(
+            "--deactivate",
+            "-d")
+        ]=None, 
+    newUsername:Annotated[str, typer.Option(
+            "--newusername",
+            "-u")
+        ]=None
+) -> None:
     session = connect_to_db()
     user_update(session=session, username=username, newUsername = newUsername, password=newPassword, disabled=deactivate)
         
