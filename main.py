@@ -7,7 +7,7 @@ import resource
 
 import database
 
-resource.setrlimit(resource.RLIMIT_CORE, (0, 0))  #to activated when going to production. Stop the authenticated_user from being shown when core dump happens
+#resource.setrlimit(resource.RLIMIT_CORE, (0, 0))  #to activated when going to production. Stop the authenticated_user from being shown when core dump happens
 
 app = typer.Typer()
 user_app = typer.Typer()
@@ -15,7 +15,7 @@ app.add_typer(user_app, name="user")
 
 import os
 
-@app.command()
+@app.command("login")
 def login(name: str, password: Annotated[str, typer.Option(prompt=True, hide_input=True)]): 
     os.putenv('name',f'{name}')
     os.putenv('password',f'{password}')
