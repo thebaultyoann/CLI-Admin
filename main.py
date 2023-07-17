@@ -25,7 +25,7 @@ def user() -> None:
     user_list(session=session)
 
 @user_app.command('add')
-def user_add_command(username:str, password: Annotated[str, typer.Option(prompt=True, hide_input=True)], disabled: Annotated[typer.Argument()]=False) -> None:
+def user_add_command(username:str, password: Annotated[str, typer.Option(prompt=True, hide_input=True)], disabled: Annotated[bool, typer.Argument()]=False) -> None:
     session = connect_to_db()
     user_add(session=session, username=username, password=password, disabled=disabled)
         
@@ -40,9 +40,9 @@ def user_delete_command(username:str) -> None:
     user_delete(session=session, username=username)
 
 @user_app.command('update')
-def user_update_command(username:str, newPassword: Annotated[str, typer.Option(hide_input=True)]="", newState: Annotated[bool, typer.Option()]=None, newUsername:Annotated[str, typer.Option()]=None) -> None:
+def user_update_command(username:str, newPassword: Annotated[bool, typer.Option(hide_input=True)]=None, newUsername:Annotated[str, typer.Option()]=None) -> None:
     session = connect_to_db()
-    user_update(session=session, username=username, newUsername = newUsername, password=newPassword, disabled=newState)
+    user_update(session=session, username=username, newUsername = newUsername, password=newPassword)
         
 @user_app.command('activate')
 def user_activate_command(username:str) -> None:
@@ -65,13 +65,11 @@ def connect_to_db():
         )
     return session
 
-def user_update(session, username:str, newUsername:str, password:str,  disabled:bool):
-    code = database.update_user(session=session, username=username, newUsername=newUsername, password=password, disabled=disabled)
-    if "1" in code :
-        return typer.secho(f"User {username} disabled state is now {disabled}", fg=typer.colors.GREEN)
-    if "2" in code : 
+def user_update(session, username:str, newUsername:str, password:str):
+    code = database.update_user(session=session, username=username, newUsername=newUsername, password=password)
+    if "1" in code : 
         return typer.secho(f"User {username} password has been changed", fg=typer.colors.GREEN)
-    if "3" in code :  
+    if "2" in code :  
         return typer.secho(f"User {username} is now {newUsername}", fg=typer.colors.GREEN)
     else :
         return typer.secho(f"Unsuccesfull modficiation of the user {username}", fg=typer.colors.RED)
