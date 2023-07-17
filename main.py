@@ -68,13 +68,13 @@ def connect_to_db():
 def user_update(session, username:str, newUsername:str, password:str,  disabled:bool):
     code = database.update_user(session=session, username=username, newUsername=newUsername, password=password, disabled=disabled)
     if "1" in code :
-        return typer.secho(f"User {username} disabled state is now {disabled}", fg=typer.colors.GREEN)
+        typer.secho(f"User {username} disabled state is now {disabled}", fg=typer.colors.GREEN)
     if "2" in code : 
-        return typer.secho(f"User {username} password has been changed", fg=typer.colors.GREEN)
+        typer.secho(f"User {username} password has been changed", fg=typer.colors.GREEN)
     if "3" in code :  
-        return typer.secho(f"User {username} is now {newUsername}", fg=typer.colors.GREEN)
+        typer.secho(f"User {username} is now {newUsername}", fg=typer.colors.GREEN)
     else :
-        return typer.secho(f"Unsuccesfull modficiation of the user {username}", fg=typer.colors.RED)
+        typer.secho(f"Unsuccesfull modficiation of the user {username}", fg=typer.colors.RED)
 
 def user_activate(session, username:str):
     if database.activate_user(session=session, username=username):
