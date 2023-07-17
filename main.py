@@ -25,7 +25,7 @@ def user() -> None:
     user_list(session=session)
 
 @user_app.command('add')
-def user_add_command(username:str, password: Annotated[str, typer.Option(prompt=True, hide_input=True)], disabled: Annotated[bool, typer.Argument()]=False) -> None:
+def user_add_command(username:str, password: Annotated[str, typer.Option(prompt=True, hide_input=True)], disabled: Annotated[typer.Argument()]=False) -> None:
     session = connect_to_db()
     user_add(session=session, username=username, password=password, disabled=disabled)
         
@@ -40,7 +40,7 @@ def user_delete_command(username:str) -> None:
     user_delete(session=session, username=username)
 
 @user_app.command('update')
-def user_update_command(username:str, newPassword: Annotated[bool, typer.Option(hide_input=True)]=None, newState: Annotated[bool, typer.Option()]=None, newUsername:Annotated[str, typer.Option()]=None) -> None:
+def user_update_command(username:str, newPassword: Annotated[str, typer.Option(hide_input=True)]="", newState: Annotated[bool, typer.Option()]=None, newUsername:Annotated[str, typer.Option()]=None) -> None:
     session = connect_to_db()
     user_update(session=session, username=username, newUsername = newUsername, password=newPassword, disabled=newState)
         
