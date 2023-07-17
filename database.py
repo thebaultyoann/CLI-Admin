@@ -60,6 +60,7 @@ def update_user(session, username, newUsername, password, disabled):
     user = session.query(User).filter(User.username == username).first()
     code=[]
     if user:
+        print(disabled)
         if disabled:
             user.disabled = disabled
             code.append("1")
