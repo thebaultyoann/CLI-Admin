@@ -25,7 +25,7 @@ def user() -> None:
     user_list(session=session)
 
 @user_app.command('add')
-def get_user(username:str, password : Annotated[str, typer.Option(prompt=True, hide_input=True)], disabled = Annotated[bool, typer.Option(prompt=True, default=False)]) -> None:
+def get_user(username:str, disabled:Annotated[bool, typer.Argument()]=False, password : Annotated[str, typer.Option(prompt=True, hide_input=True)]) -> None:
     session = connect_to_db()
     user_add(session=session, username=username, password=password, disabled=disabled)
     return print(user.username)
