@@ -54,7 +54,7 @@ def connect_to_db():
 
 
 def user_list(session):
-        users = database.get_all_users(session)
+    users = database.get_all_users(session)
     if len(users) == 0:
         typer.secho(
             "There are no users in the database yet", fg=typer.colors.RED
@@ -82,7 +82,7 @@ def user_list(session):
 
 def user_get(session, username:str):
     user = database.get_a_single_user(session=session, username=username)
-    if len(users) == 0:
+    if len(user) == 0:
         typer.secho(
             "This user doesn't exist", fg=typer.colors.RED
         )
