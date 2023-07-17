@@ -25,21 +25,36 @@ def user() -> None:
     user_list(session=session)
 
 @user_app.command('add')
-def get_user(username:str, password: Annotated[str, typer.Option(prompt=True, hide_input=True)], disabled: Annotated[bool, typer.Argument()]=False) -> None:
+def user_add_command(username:str, password: Annotated[str, typer.Option(prompt=True, hide_input=True)], disabled: Annotated[bool, typer.Argument()]=False) -> None:
     session = connect_to_db()
     user_add(session=session, username=username, password=password, disabled=disabled)
-    return print(user.username)
         
 @user_app.command("get")
-def user(username:str) -> None:
+def user_get_command(username:str) -> None:
     session = connect_to_db()
     user_get(session=session, username=username)
 
 @user_app.command("delete")
-def user(username:str) -> None:
+def user_delete_command(username:str) -> None:
     session = connect_to_db()
     user_delete(session=session, username=username)
 
+@user_app.command('update')
+def user_update_command(username:str, newPassword: Annotated[bool, typer.Optional(hide_input=True)], newState: Annotated[bool, typer.Optional()], newUsername:Annotated[str, typer.Optional()]) -> None:
+    session = connect_to_db()
+    if newUsername:
+        username=newUsername
+    user_update(session=session, username=username, password=password, disabled=disabled)
+        
+@user_app.command('activate')
+def user_activate_command(username:str) -> None:
+    session = connect_to_db()
+    user_activate(session=session, username=username)
+
+@user_app.command('deactivate')
+def user_deactivate_command(username:str) -> None:
+    session = connect_to_db()
+    user_deactivate(session=session, username=username)
 
 def connect_to_db():
     name=os.getenv('name')  
@@ -48,17 +63,29 @@ def connect_to_db():
         DB_Username_For_Admin=name,
         DB_Password_For_Admin=password,
         DB_Name_For_Admin_User="astrolabium",
-        DB_Container_Name="172.19.0.2"
+        DB_Container_Name="172.18.0.2"
         )
     return session
 
+def user_update(session, username:str, password:str, disabled:bool):
+    if database.update_user(session=session, username=username, password=password, disabled=disabled):
+        return typer.secho(f"User {username} was added to the database and his disabled state is {disabled}", fg=typer.colors.GREEN)
+    return typer.secho(f"Unsuccesfull add of the user {username}", fg=typer.colors.RED)
+
+def user_activate(session, username:str)
+    if database.activate_user(session=session, username=username)
+        return typer.secho(f"User {username} was activated")
+    return typer.secho(f"Unsuccesfull activation of the user {username}", fg=typer.colors.RED)
+
+def user_deactivate(session, username:str)
+    if database.deactivate_user(session=session, username=username)
+        return typer.secho(f"User {username} was deactivated")
+    return typer.secho(f"Unsuccesfull deactivation of the user {username}", fg=typer.colors.RED)
 
 def user_list(session):
     users = database.get_all_users(session)
     if len(users) == 0:
-        typer.secho(
-            "There are no users in the database yet", fg=typer.colors.RED
-        )
+        typer.secho("There are no users in the database yet", fg=typer.colors.RED)
         raise typer.Exit()
     typer.secho("\nUser list:\n", fg=typer.colors.BLUE, bold=True)
     columns = (
@@ -82,17 +109,15 @@ def user_list(session):
 
 def user_add(session, username:str, password:str, disabled:bool):
     if database.add_user(session=session, username=username, password=password, disabled=disabled):
-        return typer.secho(f"User {username} was added to the database and his disabled state is {distabled}")
-    return typer.secho(f"Unsuccesfull add of the user {username}")
+        return typer.secho(f"User {username} was added to the database and his disabled state is {disabled}", fg=typer.colors.GREEN)
+    return typer.secho(f"Unsuccesfull add of the user {username}", fg=typer.colors.RED)
 
 def user_get(session, username:str):
     user = database.get_a_single_user(session=session, username=username)
-    if len(user) == 0:
-        typer.secho(
-            "This user doesn't exist", fg=typer.colors.RED
-        )
+    if not user:
+        typer.secho("This user doesn't exist", fg=typer.colors.RED)
         raise typer.Exit()
-    typer.secho("\nUser list:\n", fg=typer.colors.BLUE, bold=True)
+    typer.secho("\nUser:\n", fg=typer.colors.BLUE, bold=True)
     columns = (
         "ID.  ",
         "| Username  ",
@@ -114,9 +139,9 @@ def user_get(session, username:str):
 def user_delete(session, username:str):
     user = database.delete_user(session=session, username=username)
     if user:
-        typer.secho(f"User {user.username} have been delete")
+        typer.secho(f"User {user.username} have been delete", fg=typer.color.GREEN)
     else: 
-        typer.secho(f"This user doesn't exist")
+        typer.secho("This user doesn't exist", fg=typer.colors.RED)
 
 if __name__ == "__main__":
     app()

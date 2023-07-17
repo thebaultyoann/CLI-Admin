@@ -51,12 +51,41 @@ def add_user(session, username, password, disabled):
     if user:
         return False
     else:
-        new_user = User(username=username, password=password, disabled=disabled)
+        new_user = User(username=username, password_hashed=password, disabled=disabled)
         session.add(new_user)
         session.commit()
         return True
 
-        
+def update_user(session, username, password, disabled):
+    user = session.query(User).filter(User.username == username).first()
+    if user:
+        if username:
+            user.username = username
+        if password:
+            user.password_hashed = password
+        if disabled:
+            user.disabled = disabled
+        session.add(new_user)
+        session.commit()
+        return True
+    else:
+        return False
+
+def activate_user(session, username):
+    user = session.query(User).filter(User.username == username).first()
+    if user:
+        user.disabled = True
+        return True
+    else:
+        return False
+
+def deactivate_user(session, username):
+    user = session.query(User).filter(User.username == username).first()
+    if user:
+        user.disabled = False
+        return True
+    else:
+        return False
 
 def get_datadays(session):
     return session.query(DataDay).all()
@@ -82,5 +111,5 @@ def get_simulation_for_target_day(session, simulationDate,targetedDay):
                 }
         })
     return output
-
+t
     
