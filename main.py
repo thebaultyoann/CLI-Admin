@@ -49,18 +49,18 @@ def user_delete_command(username:str) -> None:
 @user_app.command('update')
 def user_update_command(
     username:str, 
+    newUsername:Annotated[str, typer.Option(
+            "--newusername",
+            "-u")
+        ]=None,
     newPassword: Annotated[str, typer.Option(
-            "--newpassword"
-            "-pw", 
+            "--newpassword",
+            "-pw"
             hide_input=True)
         ]=None, 
     deactivate: Annotated[bool, typer.Option(
             "--deactivate",
             "-d")
-        ]=None, 
-    newUsername:Annotated[str, typer.Option(
-            "--newusername",
-            "-u")
         ]=None
 ) -> None:
     session = connect_to_db()
