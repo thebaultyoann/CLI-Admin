@@ -14,18 +14,18 @@ user_app = typer.Typer()
 app.add_typer(user_app, name="user")
 
 @app.command("login")
-def login(name: str, password: Annotated[str, typer.Argument(prompt=True, hide_input=True)]): 
+def login(name: str, password: Annotated[str, typer.Argument(hide_input=True)]): 
     os.putenv('name',f'{name}')
     os.putenv('password',f'{password}')
     os.system('bash')
 
 @user_app.command("list")
-def user(None) -> None:
+def user() -> None:
     session = connect_to_db()
     user_list(session=session)
 
 @user_app.command('add')
-def get_user(username:str, password : Annotated[str, typer.Argument(prompt=True, hide_input=True)], disabled = Annotated[bool, typer.Argument(prompt=True, default=False)]) -> None:
+def get_user(username:str, password : Annotated[str, typer.Argument(hide_input=True)], disabled = Annotated[bool, typer.Argument(default=False)]) -> None:
     session = connect_to_db()
     user_add(session=session, username=username, password=password, disabled=disabled)
     return print(user.username)
