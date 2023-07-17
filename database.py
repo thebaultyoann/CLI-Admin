@@ -111,5 +111,4 @@ def get_simulation_for_target_day(session, simulationDate,targetedDay):
                 }
         })
     return output
-t
     
