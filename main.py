@@ -55,7 +55,7 @@ def user_update_command(
         ]=None,
     newPassword: Annotated[str, typer.Option(
             "--newpassword",
-            "-pw"
+            "-pw",
             hide_input=True)
         ]=None, 
     deactivate: Annotated[bool, typer.Option(
