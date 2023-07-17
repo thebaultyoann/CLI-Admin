@@ -119,4 +119,4 @@ def user_delete(session, username:str):
         typer.secho(f"This user doesn't exist")
 
 if __name__ == "__main__":
-    app = typer.Typer()
+    app()
