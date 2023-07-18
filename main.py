@@ -223,9 +223,8 @@ def auto_logout():
     time.sleep(3)
     os.putenv('name', '')
     os.putenv('password', '')
-    os.system('bash')
     typer.secho(f"You are disconnected, if you want to keep using the CLI you need to reconnect", fg=typer.colors.RED)
-
+    os.system('bash')
 
 if __name__ == "__main__":
     app()
