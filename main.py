@@ -3,8 +3,8 @@ from typing import Callable
 from functools import wraps
 from typing_extensions import Annotated
 import os
-import mariadb
-import sqlalchemy.exc
+import mariadb  
+from sqlalchemy import exc
 
 import database
 
@@ -34,9 +34,16 @@ def user_authentificated():
             DB_Name_For_Admin_User="astrolabium",
             DB_Container_Name="172.18.0.2"
         )   
-    except:
-        print(f"Error occurred")
+    except exc.OperationalError:
+        print(f"Error occurred2")
         return False
+    except exc.SQLAlchemyError:
+        print(f"Error occurred1")
+        return False
+    except:
+        print(f"Error occurred3")
+        return False
+
     return True
 
 @app.command("login")
