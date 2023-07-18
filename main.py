@@ -36,6 +36,8 @@ def user_authentificated():
             )
     except (mariadb.OperationalError, sqlalchemy.exc.OperationalError) as e:
        return False
+    except:
+        return False
     return True
 
 @app.command("login")
