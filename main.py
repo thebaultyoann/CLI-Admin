@@ -10,6 +10,15 @@ app = typer.Typer()
 user_app = typer.Typer()
 app.add_typer(user_app, name="user")
 
+def login_required(function):
+    @wraps(function)
+    def wrapper(*args, **kwargs):
+        if user_authentificated():
+            return function(*args, **kwargs)
+        else:
+            print("Erreur : Authentification requise.")
+    return wrapper
+
 @app.command("login")
 def login(
     name: str, 
@@ -168,14 +177,6 @@ def user_delete(session, username:str):
     else: 
         typer.secho("This user doesn't exist", fg=typer.colors.RED)
 
-def login_required(function):
-    @wraps(function)
-    def wrapper(*args, **kwargs):
-        if user_authentificated():
-            return function(*args, **kwargs)
-        else:
-            print("Erreur : Authentification requise.")
-    return wrapper
 
 def user_authentificated():
     name=os.getenv('name')  
