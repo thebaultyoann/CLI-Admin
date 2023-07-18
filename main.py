@@ -37,31 +37,14 @@ def user_authentificated():
         typer.secho(f"You need to login", fg=typer.colors.RED)
         return False
     try: 
-        database.start_a_db_session(
+        database.test_credentials(
             DB_Username_For_Admin=name,
             DB_Password_For_Admin=password,
             DB_Name_For_Admin_User="astrolabium",
             DB_Container_Name="172.18.0.2"
         )   
-    except OperationalError as e:
-        if isinstance(e.orig, mariadb.OperationalError):
-            print(f"Error occurred: Could not connect to the database")
-        else:
-            print(f"Error occurred: {e}")
-        return False
-    except mariadb.OperationalError:
-        print(f"Error occurred: Could not connect to the database")
-        return False
-    except exc.OperationalError:
-        print(f"Error occurred2")
-        return False
-    except exc.SQLAlchemyError:
-        print(f"Error occurred1")
-        return False
     except:
-        print(f"Error occurred3")
         return False
-
     return True
 
 @app.command("login")
