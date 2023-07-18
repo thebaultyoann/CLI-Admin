@@ -58,8 +58,8 @@ def login(
         return typer.secho(f"You are now connected", fg=typer.colors.GREEN)
     else:
         typer.secho(f"Wrong credentials", fg=typer.colors.RED)
-        os.putenv('name',None)
-        os.putenv('password',None)
+        os.putenv('name','')
+        os.putenv('password','')
         os.system('bash')
         return False
 
