@@ -42,6 +42,9 @@ def user_authentificated():
             DB_Name_For_Admin_User="astrolabium",
             DB_Container_Name="172.18.0.2"
         )   
+    except mariadb.OperationalError:
+        print(f"Error occurred: Could not connect to the database")
+        return False
     except exc.OperationalError:
         print(f"Error occurred2")
         return False
