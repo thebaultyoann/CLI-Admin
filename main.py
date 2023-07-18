@@ -57,8 +57,10 @@ def login(
         typer.secho(f"You are now connected", fg=typer.colors.GREEN)
         return os.system('bash')
     else:
+        os.putenv('name','')
+        os.putenv('password','')
         typer.secho(f"Wrong credentials", fg=typer.colors.RED)
-        return False
+        return os.system('bash')
 
 @user_app.command("list")
 @login_required
