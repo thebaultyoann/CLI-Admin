@@ -3,11 +3,8 @@ from typing import Callable
 from functools import wraps
 from typing_extensions import Annotated
 import os
-import resource
 
 import database
-
-#resource.setrlimit(resource.RLIMIT_CORE, (0, 0))  #to activated when going to production. Stop the authenticated_user from being shown when core dump happens
 
 app = typer.Typer()
 user_app = typer.Typer()
@@ -17,12 +14,13 @@ app.add_typer(user_app, name="user")
 def login(
     name: str, 
     password: Annotated[str, typer.Option(prompt=True, hide_input=True)]
-) -> None: 
+    ) -> None: 
     os.putenv('name',f'{name}')
     os.putenv('password',f'{password}')
     os.system('bash')
 
 @user_app.command("list")
+@login_required
 def user() -> None:
     session = connect_to_db()
     user_list(session=session)
@@ -32,7 +30,7 @@ def user_add_command(
     username:str, 
     password: Annotated[str, typer.Option(prompt="The client password", hide_input=True)], 
     disabled: Annotated[bool, typer.Argument()]=False
-) -> None:
+    ) -> None:
     session = connect_to_db()
     user_add(session=session, username=username, password=password, disabled=disabled)
         
@@ -62,7 +60,7 @@ def user_update_command(
             "--deactivate/--activate",
             "-d/-a")
         ]=None
-) -> None:
+    ) -> None:
     session = connect_to_db()
     user_update(session=session, username=username, newUsername = newUsername, password=newPassword, disabled=deactivate)
         
@@ -70,6 +68,7 @@ def user_update_command(
 def user_activate_command(username:str) -> None:
     session = connect_to_db()
     user_activate(session=session, username=username)
+
 
 @user_app.command('deactivate')
 def user_deactivate_command(username:str) -> None:
@@ -169,5 +168,37 @@ def user_delete(session, username:str):
     else: 
         typer.secho("This user doesn't exist", fg=typer.colors.RED)
 
+def login_required(fonction):
+    def wrapper(*args, **kwargs):
+        if user_authentificated():
+            return fonction(*args, **kwargs)
+        else:
+            print("Erreur : Authentification requise.")
+    return wrapper
+
+def user_authentificated():
+    name=os.getenv('name')  
+    password=os.getenv('password')
+    if name=="" or password=="":
+        typer.secho(f"You need to login", fg=typer.colors.RED)
+        return False
+    try: 
+        database.start_a_db_session(
+            DB_Username_For_Admin=name,
+            DB_Password_For_Admin=password,
+            DB_Name_For_Admin_User="astrolabium",
+            DB_Container_Name="172.18.0.2"
+            )
+    except mariadb.OperationalError: 
+        typer.secho(f"Wrong credentials", fg=typer.colors.RED)
+        return False    
+    except sqlalchemy.exc.OperationalError: 
+        typer.secho(f"Wrong credentials", fg=typer.colors.RED)
+        return False   
+    except TypeError: 
+        typer.secho(f"Wrong credentials", fg=typer.colors.RED)
+        return False   
+    return True
+    
 if __name__ == "__main__":
     app()
