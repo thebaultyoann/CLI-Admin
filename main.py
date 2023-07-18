@@ -34,8 +34,8 @@ def user_authentificated():
             DB_Name_For_Admin_User="astrolabium",
             DB_Container_Name="172.18.0.2"
             )
-    except (mariadb.OperationalError, sqlalchemy.exc.OperationalError):
-        return False   
+    except (mariadb.OperationalError, sqlalchemy.exc.OperationalError) as e:
+       return False
     return True
 
 @app.command("login")
