@@ -29,7 +29,6 @@ def login_required(function):
             return typer.secho(f"Wrong credentials", fg=typer.colors.RED)
     return wrapper
 
-
 def user_authentificated():
     name=os.getenv('name')  
     password=os.getenv('password')
@@ -55,6 +54,14 @@ def login(
     os.putenv('name',f'{name}')
     os.putenv('password',f'{password}')
     os.system('bash')
+    if user_authentificated():
+        return typer.secho(f"You are now connected", fg=typer.colors.GREEN)
+    else:
+        typer.secho(f"Wrong credentials", fg=typer.colors.RED)
+        os.putenv('name',None)
+        os.putenv('password',None)
+        os.system('bash')
+        return False
 
 @user_app.command("list")
 @login_required
