@@ -218,7 +218,7 @@ def connect_to_db():
     return session
 
 def auto_logout():
-    asyncio.sleep(300)
+    time.sleep(300)
     os.putenv('name', '')
     os.putenv('password', '')
     return os.system('bash')
