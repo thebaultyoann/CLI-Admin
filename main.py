@@ -23,15 +23,15 @@ app.add_typer(user_app, name="user")
 def login_required(function):
     @wraps(function)
     def wrapper(*args, **kwargs):
-        if user_authentificated():
+        name=os.getenv('name')  
+        password=os.getenv('password')
+        if user_authentificated(name=name,password=password):
             return function(*args, **kwargs)
         else:
             return typer.secho(f"Wrong credentials", fg=typer.colors.RED)
     return wrapper
 
-def user_authentificated():
-    name=os.getenv('name')  
-    password=os.getenv('password')
+def user_authentificated(name:str, password:str):
     if name==None or password==None:
         typer.secho(f"You need to login", fg=typer.colors.RED)
         return False
@@ -51,16 +51,13 @@ def login(
     name: str, 
     password: Annotated[str, typer.Option(prompt=True, hide_input=True)]
     ) -> None: 
-    os.putenv('name',f'{name}')
-    os.putenv('password',f'{password}')
-    if user_authentificated():
-        os.system('bash')
-        return typer.secho(f"You are now connected", fg=typer.colors.GREEN)
+    if user_authentificated(name=name, password=password):
+        os.putenv('name',f'{name}')
+        os.putenv('password',f'{password}')
+        typer.secho(f"You are now connected", fg=typer.colors.GREEN)
+        return os.system('bash')
     else:
         typer.secho(f"Wrong credentials", fg=typer.colors.RED)
-        os.putenv('name','')
-        os.putenv('password','')
-        os.system('bash')
         return False
 
 @user_app.command("list")
