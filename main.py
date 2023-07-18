@@ -53,7 +53,7 @@ def login(
     if user_authentificated(name=name, password=password):
         os.putenv('name',f'{name}')
         os.putenv('password',f'{password}')
-        asyncio.create_task(run_auto_logout()) ##disconnect after 5min
+        asyncio.create_task(auto_logout()) ##disconnect after 5min
         typer.secho(f"You are now connected", fg=typer.colors.GREEN)
         return os.system('bash')
     else:
@@ -216,9 +216,6 @@ def connect_to_db():
         DB_Container_Name="172.18.0.2"
         )
     return session
-
-async def run_auto_logout():
-    await auto_logout()
 
 def auto_logout():
     asyncio.sleep(300)
