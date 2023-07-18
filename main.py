@@ -5,8 +5,15 @@ from typing_extensions import Annotated
 import os
 import mariadb  
 from sqlalchemy import exc
+import sys
 
 import database
+
+
+def except_hook(type, value, tback):
+    print("here we are!")
+    sys.__excepthook__(type, value, tback) # then call the default handler
+sys.excepthook = except_hook
 
 app = typer.Typer()
 user_app = typer.Typer()
@@ -20,6 +27,7 @@ def login_required(function):
         else:
             return typer.secho(f"Wrong credentials", fg=typer.colors.RED)
     return wrapper
+
 
 def user_authentificated():
     name=os.getenv('name')  
