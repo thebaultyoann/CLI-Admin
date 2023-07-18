@@ -28,15 +28,14 @@ def user_authentificated():
         typer.secho(f"You need to login", fg=typer.colors.RED)
         return False
     try: 
-        print("test")
         database.start_a_db_session(
             DB_Username_For_Admin=name,
             DB_Password_For_Admin=password,
             DB_Name_For_Admin_User="astrolabium",
             DB_Container_Name="172.18.0.2"
-            )
-    except Exception as e:
-        print(f"Error occurred: {str(e)}")
+        )   
+    except:
+        print(f"Error occurred")
         return False
     return True
 
