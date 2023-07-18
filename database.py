@@ -25,6 +25,7 @@ def start_a_db_session(
     DB_Container_Name:str,
  ):
     engine = create_engine("mariadb+mariadbconnector://"+DB_Username_For_Admin+":"+DB_Password_For_Admin+"@"+DB_Container_Name+":3306/"+DB_Name_For_Admin_User)
+    engine.connect() #force connexion first to handle errors linked with it
     Session = sessionmaker(bind=engine)
     return Session()
 
