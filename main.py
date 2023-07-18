@@ -220,7 +220,7 @@ def connect_to_db():
     return session
 
 def auto_logout():
-    time.sleep(10)
+    time.sleep(3)
     os.putenv('name', '')
     os.putenv('password', '')
     return os.system('bash')
