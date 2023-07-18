@@ -30,7 +30,7 @@ def user() -> None:
 @user_app.command('add')
 def user_add_command(
     username:str, 
-    password: Annotated[str, typer.Option(prompt=True, hide_input=True)], 
+    password: Annotated[str, typer.Option(prompt="The client password", hide_input=True)], 
     disabled: Annotated[bool, typer.Argument()]=False
 ) -> None:
     session = connect_to_db()
