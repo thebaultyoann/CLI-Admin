@@ -3,6 +3,8 @@ from typing import Callable
 from functools import wraps
 from typing_extensions import Annotated
 import os
+import mariadb
+import sqlalchemy.exc
 
 import database
 
@@ -181,7 +183,6 @@ def user_delete(session, username:str):
 def user_authentificated():
     name=os.getenv('name')  
     password=os.getenv('password')
-    typer.secho(f"cc {name}")
     if name=="" or password=="":
         typer.secho(f"You need to login", fg=typer.colors.RED)
         return False
