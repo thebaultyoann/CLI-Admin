@@ -168,10 +168,11 @@ def user_delete(session, username:str):
     else: 
         typer.secho("This user doesn't exist", fg=typer.colors.RED)
 
-def login_required(fonction):
+def login_required(function):
+    @login_required(function)
     def wrapper(*args, **kwargs):
         if user_authentificated():
-            return fonction(*args, **kwargs)
+            return function(*args, **kwargs)
         else:
             print("Erreur : Authentification requise.")
     return wrapper
