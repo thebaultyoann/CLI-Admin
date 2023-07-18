@@ -5,6 +5,7 @@ from typing_extensions import Annotated
 import os
 import mariadb  
 from sqlalchemy import exc
+from sqlalchemy.exc import OperationalError
 import sys
 
 import database
@@ -42,6 +43,12 @@ def user_authentificated():
             DB_Name_For_Admin_User="astrolabium",
             DB_Container_Name="172.18.0.2"
         )   
+    except OperationalError as e:
+        if isinstance(e.orig, mariadb.OperationalError):
+            print(f"Error occurred: Could not connect to the database")
+        else:
+            print(f"Error occurred: {e}")
+        return False
     except mariadb.OperationalError:
         print(f"Error occurred: Could not connect to the database")
         return False
