@@ -21,6 +21,25 @@ def login_required(function):
             return typer.secho(f"Wrong credentials", fg=typer.colors.RED)
     return wrapper
 
+def user_authentificated():
+    name=os.getenv('name')  
+    password=os.getenv('password')
+    if name=="" or password=="":
+        typer.secho(f"You need to login", fg=typer.colors.RED)
+        return False
+    try: 
+        database.start_a_db_session(
+            DB_Username_For_Admin=name,
+            DB_Password_For_Admin=password,
+            DB_Name_For_Admin_User="astrolabium",
+            DB_Container_Name="172.18.0.2"
+            )
+    except (mariadb.OperationalError, sqlalchemy.exc.OperationalError):
+        return False   
+    except TypeError: 
+        return False   
+    return True
+
 @app.command("login")
 def login(
     name: str, 
@@ -178,28 +197,6 @@ def user_delete(session, username:str):
         typer.secho(f"User {user.username} have been delete", fg=typer.color.GREEN)
     else: 
         typer.secho("This user doesn't exist", fg=typer.colors.RED)
-
-
-def user_authentificated():
-    name=os.getenv('name')  
-    password=os.getenv('password')
-    if name=="" or password=="":
-        typer.secho(f"You need to login", fg=typer.colors.RED)
-        return False
-    try: 
-        database.start_a_db_session(
-            DB_Username_For_Admin=name,
-            DB_Password_For_Admin=password,
-            DB_Name_For_Admin_User="astrolabium",
-            DB_Container_Name="172.18.0.2"
-            )
-    except mariadb.OperationalError: 
-        return False    
-    except sqlalchemy.exc.OperationalError: 
-        return False   
-    except TypeError: 
-        return False   
-    return True
     
 if __name__ == "__main__":
     app()
