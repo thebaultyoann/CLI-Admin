@@ -24,10 +24,11 @@ def login_required(function):
 def user_authentificated():
     name=os.getenv('name')  
     password=os.getenv('password')
-    if name=="" or password=="":
+    if name==None or password==None:
         typer.secho(f"You need to login", fg=typer.colors.RED)
         return False
     try: 
+        print("test")
         database.start_a_db_session(
             DB_Username_For_Admin=name,
             DB_Password_For_Admin=password,
