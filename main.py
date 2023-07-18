@@ -70,6 +70,7 @@ def user() -> None:
     user_list(session=session)
 
 @user_app.command('add')
+@login_required
 def user_add_command(
     username:str, 
     password: Annotated[str, typer.Option(prompt="The client password", hide_input=True)], 
@@ -79,16 +80,19 @@ def user_add_command(
     user_add(session=session, username=username, password=password, disabled=disabled)
         
 @user_app.command("get")
+@login_required
 def user_get_command(username:str) -> None:
     session = connect_to_db()
     user_get(session=session, username=username)
 
 @user_app.command("delete")
+@login_required
 def user_delete_command(username:str) -> None:
     session = connect_to_db()
     user_delete(session=session, username=username)
 
 @user_app.command('update')
+@login_required
 def user_update_command(
     username:str, 
     newUsername:Annotated[str, typer.Option(
@@ -109,12 +113,14 @@ def user_update_command(
     user_update(session=session, username=username, newUsername = newUsername, password=newPassword, disabled=deactivate)
         
 @user_app.command('activate')
+@login_required
 def user_activate_command(username:str) -> None:
     session = connect_to_db()
     user_activate(session=session, username=username)
 
 
 @user_app.command('deactivate')
+@login_required
 def user_deactivate_command(username:str) -> None:
     session = connect_to_db()
     user_deactivate(session=session, username=username)
