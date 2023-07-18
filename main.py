@@ -3,9 +3,7 @@ from typing import Callable
 from functools import wraps
 from typing_extensions import Annotated
 import os
-import mariadb  
-from sqlalchemy import exc
-from sqlalchemy.exc import OperationalError
+import time
 import sys
 
 import database
@@ -54,6 +52,7 @@ def login(
     if user_authentificated(name=name, password=password):
         os.putenv('name',f'{name}')
         os.putenv('password',f'{password}')
+        auto_logout()
         typer.secho(f"You are now connected", fg=typer.colors.GREEN)
         return os.system('bash')
     else:
@@ -123,17 +122,6 @@ def user_activate_command(username:str) -> None:
 def user_deactivate_command(username:str) -> None:
     session = connect_to_db()
     user_deactivate(session=session, username=username)
-
-def connect_to_db():
-    name=os.getenv('name')  
-    password=os.getenv('password')
-    session=database.start_a_db_session(
-        DB_Username_For_Admin=name,
-        DB_Password_For_Admin=password,
-        DB_Name_For_Admin_User="astrolabium",
-        DB_Container_Name="172.18.0.2"
-        )
-    return session
 
 def user_update(session, username:str, newUsername:str, password:str,  disabled:bool):
     code = database.update_user(session=session, username=username, newUsername=newUsername, password=password, disabled=disabled)
@@ -217,5 +205,22 @@ def user_delete(session, username:str):
     else: 
         typer.secho("This user doesn't exist", fg=typer.colors.RED)
     
+def connect_to_db():
+    name=os.getenv('name')  
+    password=os.getenv('password')
+    session=database.start_a_db_session(
+        DB_Username_For_Admin=name,
+        DB_Password_For_Admin=password,
+        DB_Name_For_Admin_User="astrolabium",
+        DB_Container_Name="172.18.0.2"
+        )
+    return session
+
+async def auto_logout():
+    time.sleep(300)
+    os.putenv('name','')
+    os.putenv('password','')
+    return os.system('bash')
+
 if __name__ == "__main__":
     app()
