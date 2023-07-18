@@ -5,6 +5,7 @@ from typing_extensions import Annotated
 import os
 import time
 import sys
+import asyncio
 
 import database
 
@@ -52,7 +53,7 @@ def login(
     if user_authentificated(name=name, password=password):
         os.putenv('name',f'{name}')
         os.putenv('password',f'{password}')
-        auto_logout()
+        asyncio.create_task(run_auto_logout()) ##disconnect after 5min
         typer.secho(f"You are now connected", fg=typer.colors.GREEN)
         return os.system('bash')
     else:
@@ -216,10 +217,13 @@ def connect_to_db():
         )
     return session
 
-async def auto_logout():
-    time.sleep(300)
-    os.putenv('name','')
-    os.putenv('password','')
+async def run_auto_logout():
+    await auto_logout()
+
+def auto_logout():
+    asyncio.sleep(300)
+    os.putenv('name', '')
+    os.putenv('password', '')
     return os.system('bash')
 
 if __name__ == "__main__":
