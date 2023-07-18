@@ -16,7 +16,7 @@ def login_required(function):
         if user_authentificated():
             return function(*args, **kwargs)
         else:
-            print("Erreur : Authentification requise.")
+            return typer.secho(f"Wrong credentials", fg=typer.colors.RED)
     return wrapper
 
 @app.command("login")
@@ -192,13 +192,10 @@ def user_authentificated():
             DB_Container_Name="172.18.0.2"
             )
     except mariadb.OperationalError: 
-        typer.secho(f"Wrong credentials", fg=typer.colors.RED)
         return False    
     except sqlalchemy.exc.OperationalError: 
-        typer.secho(f"Wrong credentials", fg=typer.colors.RED)
         return False   
     except TypeError: 
-        typer.secho(f"Wrong credentials", fg=typer.colors.RED)
         return False   
     return True
     
