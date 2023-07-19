@@ -64,6 +64,13 @@ def login(
         typer.secho(f"Wrong credentials", fg=typer.colors.RED)
         return os.system('bash')
 
+@app.command("logout")
+def logout() -> None: 
+        os.putenv('name','')
+        os.putenv('password','')
+        typer.secho(f"You are now disconnected", fg=typer.colors.RED)
+        return os.system('bash')
+
 @user_app.command("list")
 @login_required
 def user() -> None:
@@ -220,10 +227,10 @@ def connect_to_db():
     return session
 
 def auto_logout():
-    time.sleep(3)
+    time.sleep(10)
     os.putenv('name', '')
     os.putenv('password', '')
-    typer.secho(f"You are disconnected, if you want to keep using the CLI you need to reconnect", fg=typer.colors.RED)
+    typer.secho(f"You are now disconnected, if you want to keep using the CLI you need to reconnect", fg=typer.colors.RED)
     os.system('bash')
 
 if __name__ == "__main__":
