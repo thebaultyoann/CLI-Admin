@@ -232,6 +232,8 @@ def auto_logout():
     os.putenv('password', '')
     typer.secho(f"You are now disconnected, if you want to keep using the CLI you need to reconnect", fg=typer.colors.RED)
     os.system('bash')
+    background_thread = threading.Thread(target=auto_logout)
+    background_thread.stop()
 
 if __name__ == "__main__":
     app()
