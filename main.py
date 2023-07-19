@@ -140,10 +140,14 @@ def user_deactivate_command(username:str) -> None:
 @login_required
 def user_change_expiration_date(
     username:str,
-    typer.Argument()
+    expirationDate: Annotated[str, typer.Argument(help="The expiration date for the user, format: dd/mm/yyyy")]
     ) -> None:
     session = connect_to_db()
-    user_deactivate(session=session, username=username)
+    expirationDate=convert_string_to_date(date=expirationDate)
+    if expirationDate:
+        user_change_expiration_date(session=session, username=username, expirationDate=expirationDate)
+    else:
+        typer.secho(f"Wrong format for expiration date", fg=typer.colors.RED)
 
 def user_update(session, username:str, newUsername:str, password:str,  disabled:bool, expirationDate:datetime.date):
     code = database.update_user(session=session, username=username, newUsername=newUsername, password=password, disabled=disabled, expirationDate=expirationDate)
@@ -276,6 +280,18 @@ def ask_confirmation_delete_user(username):
             print("Invalid response. Answer with 'yes' ou 'no'.")
     return True
 
+def convert_string_to_date(date_string):
+    try:
+        day, month, year = map(int, date_string.split('/'))
+        new_date = datetime.date(year, month, day)
+        if new_date.year == year and new_date.month == month and new_date.day == day:
+            return new_date
+        else:
+            return None
+    except (ValueError, AttributeError):
+        return None
+    except:
+        return None
 
 def connect_to_db():
     name=os.getenv('name')  
