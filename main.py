@@ -6,6 +6,7 @@ import os
 import time
 import sys
 import threading
+import multiprocessing
 
 
 import database
@@ -54,8 +55,8 @@ def login(
     if user_authentificated(name=name, password=password):
         os.putenv('name',f'{name}')
         os.putenv('password',f'{password}')
-        background_thread = threading.Thread(target=auto_logout)
-        background_thread.start()
+        background_process = multiprocessing.Process(target=auto_logout)
+        background_process.start()
         typer.secho(f"You are now connected", fg=typer.colors.GREEN)
         return os.system('bash')
     else:
