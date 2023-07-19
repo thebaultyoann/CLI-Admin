@@ -4,6 +4,7 @@ from functools import wraps
 from typing_extensions import Annotated
 import os
 import time
+import datetime
 import sys
 import threading
 
@@ -114,10 +115,14 @@ def user_update_command(
     deactivate: Annotated[bool, typer.Option(
             "--deactivate/--activate",
             "-d/-a")
+        ]=None,
+    expirationDate : Annotated[datetime.date, typer.Option(
+            "--expirationdate",
+            "-expd")
         ]=None
     ) -> None:
     session = connect_to_db()
-    user_update(session=session, username=username, newUsername = newUsername, password=newPassword, disabled=deactivate)
+    user_update(session=session, username=username, newUsername = newUsername, password=newPassword, disabled=deactivate, expirationDate=expirationDate)
         
 @user_app.command('activate')
 @login_required
@@ -131,15 +136,28 @@ def user_deactivate_command(username:str) -> None:
     session = connect_to_db()
     user_deactivate(session=session, username=username)
 
-def user_update(session, username:str, newUsername:str, password:str,  disabled:bool):
-    code = database.update_user(session=session, username=username, newUsername=newUsername, password=password, disabled=disabled)
+@user_app.command('changedate')
+@login_required
+def user_change_expiration_date(
+    username:str,
+    typer.Argument()
+    ) -> None:
+    session = connect_to_db()
+    user_deactivate(session=session, username=username)
+
+def user_update(session, username:str, newUsername:str, password:str,  disabled:bool, expirationDate:datetime.date):
+    code = database.update_user(session=session, username=username, newUsername=newUsername, password=password, disabled=disabled, expirationDate=expirationDate)
     if "1" in code :
         typer.secho(f"User {username} disabled state is now {disabled}", fg=typer.colors.GREEN)
     if "2" in code : 
         typer.secho(f"User {username} password has been changed", fg=typer.colors.GREEN)
     if "3" in code :  
         typer.secho(f"User {username} is now {newUsername}", fg=typer.colors.GREEN)
-    if (not "1" in code) and (not "2" in code) and (not "3" in code) :
+    if "4" in code :
+        typer.secho(f"User {username} expiration date is now {expirationDate}")
+    if "5" in code : 
+        typer.secho(f"User {username} the new expiration date is before the old expiration date. If you want to perform this operation use the command changedate")
+    if not ("1" in code or "2" in code or "3" in code or "4" in code or "5" in code) :
         typer.secho(f"Unsuccesfull modficiation of the user {username}", fg=typer.colors.RED)
 
 def user_activate(session, username:str):
@@ -207,12 +225,58 @@ def user_get(session, username:str):
     return True
 
 def user_delete(session, username:str):
-    user = database.delete_user(session=session, username=username)
+    user = database.get_a_single_user(session=session, username=username)
     if user:
-        typer.secho(f"User {user.username} have been delete", fg=typer.color.GREEN)
+        if ask_confirmation_delete_user:
+            user = database.delete_user(session=session, username=username)
+            typer.secho(f"User {user.username} have been delete", fg=typer.color.GREEN)
+        else : 
+            typer.secho(f"Deletion of {user.username} cancelled", fg=typer.colors.RED)
     else: 
         typer.secho("This user doesn't exist", fg=typer.colors.RED)
     
+def user_change_expiration_date(session, username:str, expirationDate:datetime.date):
+    if not database.check_expiration_date(session=session, username=username, expirationDate=expirationDate):
+        if ask_confirmation_expiration_date(expirationDate):
+            database.change_expiration_date(session=session, username=username, expirationDate=expirationDate)
+            typer.secho(f"User {user.username} expiration date is now {expirationDate}", fg=typer.color.GREEN)
+        else:
+            typer.secho("Modification of expiration date cancelled", fg=typer.colors.RED)
+            return False
+    else: 
+        database.change_expiration_date(session=session, username=username, expirationDate=expirationDate)
+        typer.secho(f"User {user.username} expiration date is now {expirationDate}", fg=typer.color.GREEN)
+        return True
+
+def ask_confirmation_expiration_date(expirationDate):
+    confirmed = False
+    valid_responses = {'yes', 'no'}
+    while not confirmed:
+        user_input = input(f"You are going to update to an expiration date which is closer than the actual one : {expirationDate}, do you confirm (yes/no): ").lower()
+        if user_input in valid_responses:
+            if user_input == 'yes':
+                confirmed = True
+            else:
+                return False
+        else:
+            print("Invalid response. Answer with 'yes' ou 'no'.")
+    return True
+
+def ask_confirmation_delete_user(username):
+    confirmed = False
+    valid_responses = {'yes', 'no'}
+    while not confirmed:
+        user_input = input(f"You are going to delete {username}, do you confirm (yes/no): ").lower()
+        if user_input in valid_responses:
+            if user_input == 'yes':
+                confirmed = True
+            else:
+                return False
+        else:
+            print("Invalid response. Answer with 'yes' ou 'no'.")
+    return True
+
+
 def connect_to_db():
     name=os.getenv('name')  
     password=os.getenv('password')
@@ -231,6 +295,8 @@ def auto_logout():
     typer.secho(f"You are now disconnected, if you want to keep using the CLI you need to reconnect", fg=typer.colors.RED)
     os.system('bash')
     return exit
+
+
 
 if __name__ == "__main__":
     app()

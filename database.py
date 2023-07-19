@@ -7,10 +7,10 @@ Base = declarative_base()
 class User(Base):
     __tablename__ = "users2"
     id = Column(Integer, primary_key=True)
-    username = Column(String)
+    username = Column(String)   
     password_hashed = Column(String)
     activated = Column(Boolean)
-    unactivation_date = Column(Boolean)
+    expiration_date = Column(Date)
 
 def start_a_db_session(
     DB_Username_For_Admin:str,
@@ -61,7 +61,7 @@ def add_user(session, username, password, disabled):
         session.commit()
         return True
 
-def update_user(session, username, newUsername, password, disabled):
+def update_user(session, username, newUsername, password, disabled, expirationDate):
     user = session.query(User).filter(User.username == username).first()
     code=[]
     if user:
@@ -74,6 +74,12 @@ def update_user(session, username, newUsername, password, disabled):
         if newUsername:
             user.username = newUsername
             code.append("3")
+        if expirationDate:
+            if check_expiration_date():
+                user.expiration_date = expirationDate
+                code.append("4")
+            else:
+                code.append("5")        
         session.add(user)
         session.commit()
         return code
@@ -99,3 +105,16 @@ def deactivate_user(session, username):
         return True
     else:
         return False
+
+def check_expiration_date(session, username, expirationDate):
+    user = session.query(User).filter(User.username == username).first()
+    if user.expiration_date >= expirationDate:
+        return False
+    return True
+
+def change_expiration_date(session, username, expirationDate):
+    user = session.query(User).filter(User.username == username).first()
+    user.expiration_date = expirationDate
+    session.add(user)
+    session.commit()
+    return True
