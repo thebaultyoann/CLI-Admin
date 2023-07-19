@@ -39,7 +39,7 @@ def user_authentificated(name:str, password:str):
             DB_Username_For_Admin=name,
             DB_Password_For_Admin=password,
             DB_Name_For_Admin_User="astrolabium",
-            DB_Container_Name="172.18.0.2"
+            DB_IP_adress="172.18.0.2"
         )   
     except:
         return False
@@ -47,25 +47,25 @@ def user_authentificated(name:str, password:str):
 
 @app.command("login")
 def login(
-    name: Annotated[str, typer.Option(prompt=True)], 
+    username: Annotated[str, typer.Option(prompt=True)], 
     password: Annotated[str, typer.Option(prompt=True, hide_input=True)]
     ) -> None: 
-    if user_authentificated(name=name, password=password):
-        os.putenv('name',f'{name}')
+    if user_authentificated(username=username, password=password):
+        os.putenv('username',f'{username}')
         os.putenv('password',f'{password}')
         background_thread = threading.Thread(target=auto_logout)
         background_thread.start()
         typer.secho(f"You are now connected", fg=typer.colors.GREEN)
         return os.system('bash')
     else:
-        os.putenv('name','')
+        os.putenv('username','')
         os.putenv('password','')
         typer.secho(f"Wrong credentials", fg=typer.colors.RED)
         return os.system('bash')
 
 @app.command("logout")
 def logout() -> None: 
-        os.putenv('name','')
+        os.putenv('username','')
         os.putenv('password','')
         typer.secho(f"You are now disconnected", fg=typer.colors.RED)
         return os.system('bash')
@@ -220,13 +220,13 @@ def connect_to_db():
         DB_Username_For_Admin=name,
         DB_Password_For_Admin=password,
         DB_Name_For_Admin_User="astrolabium",
-        DB_Container_Name="172.18.0.2"
+        DB_IP_adress="172.18.0.2"
         )
     return session
 
 def auto_logout():
     time.sleep(30)
-    os.putenv('name', '')
+    os.putenv('username', '')
     os.putenv('password', '')
     typer.secho(f"You are now disconnected, if you want to keep using the CLI you need to reconnect", fg=typer.colors.RED)
     os.system('bash')
