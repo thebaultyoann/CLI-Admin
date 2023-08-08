@@ -1,17 +1,13 @@
 #!/bin/bash
-sudo apt-get install python3-venv
-
-sudo apt-get install gcc wget 
-sudo wget https://dlm.mariadb.com/2678579/Connectors/c/connector-c-3.3.3/mariadb-connector-c-3.3.3-debian-buster-amd64.tar.gz -O - |sudo tar -zxf - --strip-components=1 -C /usr 
-sudo echo "export LD_LIBRARY_PATH=/usr/lib/mariadb" >> ~/.bashrc
+sudo apt-get update
+sudo apt-get install python3-venv gcc wget
+sudo wget https://downloads.mariadb.com/Connectors/c/connector-c-3.3.5/mariadb-connector-c-3.3.5-debian-buster-amd64.tar.gz -O - | sudo tar -zxf - --strip-components=1 -C /usr
+echo "export LD_LIBRARY_PATH=/usr/lib/mariadb" >> ~/.bashrc
 source ~/.bashrc
-
 
 python3 -m venv venv
 
-VENV_ACTIVATE="venv/bin/activate"
-
-source $VENV_ACTIVATE
+source venv/bin/activate
 pip install -r cli_requirements.txt
 
 PYTHON_EXECUTABLE="python3"
