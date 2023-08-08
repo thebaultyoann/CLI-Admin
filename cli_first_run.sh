@@ -1,6 +1,6 @@
 #!/bin/bash
 sudo apt-get update
-sudo apt-get install python3-venv gcc wget
+sudo apt-get install python3-venv gcc wget python3-dev libmariadb3 libmariadb-dev
 sudo wget https://downloads.mariadb.com/Connectors/c/connector-c-3.3.5/mariadb-connector-c-3.3.5-debian-buster-amd64.tar.gz -O - | sudo tar -zxf - --strip-components=1 -C /usr
 echo "export LD_LIBRARY_PATH=/usr/lib/mariadb" >> ~/.bashrc
 source ~/.bashrc
