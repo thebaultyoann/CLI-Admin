@@ -104,10 +104,10 @@ def user() -> None:
 def user_add_command(
     username:str, 
     password: Annotated[str, typer.Option(prompt="The client password", hide_input=True)], 
-    disabled: Annotated[bool, typer.Argument()]=False
+    activated: Annotated[bool, typer.Argument()]=False
     ) -> None:
     session = connect_to_db()
-    user_add(session=session, username=username, password=password, disabled=disabled)
+    user_add(session=session, username=username, password=password, activated=activated)
         
 @user_app.command("get")
 @login_required
@@ -144,7 +144,7 @@ def user_update_command(
         ]=None
     ) -> None:
     session = connect_to_db()
-    user_update(session=session, username=username, newUsername = newUsername, password=newPassword, disabled=deactivate, expirationDate=expirationDate)
+    user_update(session=session, username=username, newUsername = newUsername, password=newPassword, activated=deactivate, expirationDate=expirationDate)
         
 @user_app.command('activate')
 @login_required
@@ -182,26 +182,26 @@ def user_list(session):
     columns = (
         "ID.  ",
         "| Username  ",
-        "| Disabled  ",
+        "| Activated  ",
     )
     headers = "".join(columns)
     typer.secho(headers, fg=typer.colors.BLUE, bold=True)
     typer.secho("-" * len(headers), fg=typer.colors.BLUE)
     for id, user in enumerate(users, 1):
-        username, disabled = user.username, user.disabled
+        username, activated = user.username, user.activated
         typer.secho(
             f"{id}{(len(columns[0]) - len(str(id))) * ' '}"
             f"| ({username}){(len(columns[1]) - len(str(username)) - 4) * ' '}"
-            f"| {disabled}{(len(columns[2]) - len(str(disabled)) - 2) * ' '}",   
+            f"| {activated}{(len(columns[2]) - len(str(activated)) - 2) * ' '}",   
             fg=typer.colors.BLUE,
         )
     typer.secho("-" * len(headers) + "\n", fg=typer.colors.BLUE)
     return True
 
-def user_add(session, username:str, password:str, disabled:bool):
+def user_add(session, username:str, password:str, activated:bool):
     password = get_password_hash(password)
-    if database.add_user(session=session, username=username, password=password, disabled=disabled):
-        return typer.secho(f"User {username} was added to the database and his disabled state is {disabled}", fg=typer.colors.GREEN)
+    if database.add_user(session=session, username=username, password=password, activated=activated):
+        return typer.secho(f"User {username} was added to the database and his activated state is {activated}", fg=typer.colors.GREEN)
     return typer.secho(f"Unsuccesfull add of the user {username}", fg=typer.colors.RED)
 
 def user_get(session, username:str):
@@ -213,16 +213,16 @@ def user_get(session, username:str):
     columns = (
         "ID.  ",
         "| Username  ",
-        "| Disabled  ",
+        "| Activated  ",
     )
     headers = "".join(columns)
     typer.secho(headers, fg=typer.colors.BLUE, bold=True)
     typer.secho("-" * len(headers), fg=typer.colors.BLUE)
-    id, username, disabled = user.id, user.username, user.disabled
+    id, username, activated = user.id, user.username, user.activated
     typer.secho(
         f"{id}{(len(columns[0]) - len(str(id))) * ' '}"
         f"| ({username}){(len(columns[1]) - len(str(username)) - 4) * ' '}"
-        f"| {disabled}{(len(columns[2]) - len(str(disabled)) - 2) * ' '}",   
+        f"| {activated}{(len(columns[2]) - len(str(activated)) - 2) * ' '}",   
         fg=typer.colors.BLUE,
     )
     typer.secho("-" * len(headers) + "\n", fg=typer.colors.BLUE)
@@ -239,11 +239,11 @@ def user_delete(session, username:str):
     else: 
         typer.secho("This user doesn't exist", fg=typer.colors.RED)
 
-def user_update(session, username:str, newUsername:str, password:str,  disabled:bool, expirationDate:datetime.date):
+def user_update(session, username:str, newUsername:str, password:str,  activated:bool, expirationDate:datetime.date):
     password = get_password_hash(password)
-    code = database.update_user(session=session, username=username, newUsername=newUsername, password=password, disabled=disabled, expirationDate=expirationDate)
+    code = database.update_user(session=session, username=username, newUsername=newUsername, password=password, activated=activated, expirationDate=expirationDate)
     if "1" in code :
-        typer.secho(f"User {username} disabled state is now {disabled}", fg=typer.colors.GREEN)
+        typer.secho(f"User {username} activated state is now {activated}", fg=typer.colors.GREEN)
     if "2" in code : 
         typer.secho(f"User {username} password has been changed", fg=typer.colors.GREEN)
     if "3" in code :  
