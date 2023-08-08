@@ -8,6 +8,7 @@ cd mariadb-connector-c-3.3.5-debian-buster-amd64
 sudo cp lib/* /usr/lib/
 sudo cp include/* /usr/include/
 sudo ldconfig
+cd ..
 rm -r  mariadb-connector-c-3.3.5-debian-buster-amd64
 rm -r  mariadb-connector-c-3.3.5-debian-buster-amd64.tar.gz
 
