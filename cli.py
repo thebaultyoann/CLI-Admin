@@ -183,16 +183,18 @@ def user_list(session):
         "ID.  ",
         "| Username  ",
         "| Activated  ",
+        "| Expiration Date"
     )
     headers = "".join(columns)
     typer.secho(headers, fg=typer.colors.BLUE, bold=True)
     typer.secho("-" * len(headers), fg=typer.colors.BLUE)
     for id, user in enumerate(users, 1):
-        username, activated = user.username, user.activated
+        username, activated, expiration_date = user.username, user.activated, user.expiration_date
         typer.secho(
             f"{id}{(len(columns[0]) - len(str(id))) * ' '}"
             f"| ({username}){(len(columns[1]) - len(str(username)) - 4) * ' '}"
-            f"| {activated}{(len(columns[2]) - len(str(activated)) - 2) * ' '}",   
+            f"| {activated}{(len(columns[2]) - len(str(activated)) - 2) * ' '}",
+            f"| {expiration_date}{(len(columns[3]) - len(str(expiration_date)) - 2) * ' '}",
             fg=typer.colors.BLUE,
         )
     typer.secho("-" * len(headers) + "\n", fg=typer.colors.BLUE)
