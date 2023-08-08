@@ -1,25 +1,20 @@
 import typer
-from typing import Callable 
 from functools import wraps
 from typing_extensions import Annotated
+from passlib.context import CryptContext
 import os
 import time
 import datetime
-import sys
 import threading
-
 import database
-
-
-def except_hook(type, value, tback):
-    print("here we are!")
-    sys.__excepthook__(type, value, tback) # then call the default handler
-sys.excepthook = except_hook
 
 app = typer.Typer()
 user_app = typer.Typer()
 app.add_typer(user_app, name="user")
 
+pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+
+#Wrapper used to check the user connexion
 def login_required(function):
     @wraps(function)
     def wrapper(*args, **kwargs):
@@ -31,26 +26,31 @@ def login_required(function):
             return typer.secho(f"Wrong credentials", fg=typer.colors.RED)
     return wrapper
 
+#Function used to check the credentials on a specific route
 def user_authentificated(name:str, password:str):
     if name==None or password==None:
         typer.secho(f"You need to login", fg=typer.colors.RED)
         return False
+    password = get_password_hash(password) #2nd hash of the admin password used to connect to the DB
     try: 
         database.test_credentials(
             DB_Username_For_Admin=name,
             DB_Password_For_Admin=password,
-            DB_Name_For_Admin_User="astrolabium",
+            DB_Name_For_Admin_User="astrolabiumtest",
             DB_IP_adress="172.18.0.2"
         )   
     except:
         return False
     return True
 
+################ ALL OF THE CLI COMMANDS ################
+
 @app.command("login")
 def login(
     username: Annotated[str, typer.Option(prompt=True)], 
     password: Annotated[str, typer.Option(prompt=True, hide_input=True)]
     ) -> None: 
+    password = get_password_hash(password)  #1st hash of the admin password stored in an env variable
     if user_authentificated(username=username, password=password):
         os.putenv('username',f'{username}')
         os.putenv('password',f'{password}')
@@ -116,7 +116,7 @@ def user_update_command(
             "--deactivate/--activate",
             "-d/-a")
         ]=None,
-    expirationDate : Annotated[datetime.date, typer.Option(
+    expirationDate : Annotated[str, typer.Option(
             "--expirationdate",
             "-expd")
         ]=None
@@ -149,30 +149,7 @@ def user_change_expiration_date(
     else:
         typer.secho(f"Wrong format for expiration date", fg=typer.colors.RED)
 
-def user_update(session, username:str, newUsername:str, password:str,  disabled:bool, expirationDate:datetime.date):
-    code = database.update_user(session=session, username=username, newUsername=newUsername, password=password, disabled=disabled, expirationDate=expirationDate)
-    if "1" in code :
-        typer.secho(f"User {username} disabled state is now {disabled}", fg=typer.colors.GREEN)
-    if "2" in code : 
-        typer.secho(f"User {username} password has been changed", fg=typer.colors.GREEN)
-    if "3" in code :  
-        typer.secho(f"User {username} is now {newUsername}", fg=typer.colors.GREEN)
-    if "4" in code :
-        typer.secho(f"User {username} expiration date is now {expirationDate}")
-    if "5" in code : 
-        typer.secho(f"User {username} the new expiration date is before the old expiration date. If you want to perform this operation use the command changedate")
-    if not ("1" in code or "2" in code or "3" in code or "4" in code or "5" in code) :
-        typer.secho(f"Unsuccesfull modficiation of the user {username}", fg=typer.colors.RED)
-
-def user_activate(session, username:str):
-    if database.activate_user(session=session, username=username):
-        return typer.secho(f"User {username} was activated")
-    return typer.secho(f"Unsuccesfull activation of the user {username}", fg=typer.colors.RED)
-
-def user_deactivate(session, username:str):
-    if database.deactivate_user(session=session, username=username):
-        return typer.secho(f"User {username} was deactivated")
-    return typer.secho(f"Unsuccesfull deactivation of the user {username}", fg=typer.colors.RED)
+################ FUNCTIONS USED TO LIGHTEN CLI COMMANDS CODE ################
 
 def user_list(session):
     users = database.get_all_users(session)
@@ -200,6 +177,7 @@ def user_list(session):
     return True
 
 def user_add(session, username:str, password:str, disabled:bool):
+    password = get_password_hash(password)
     if database.add_user(session=session, username=username, password=password, disabled=disabled):
         return typer.secho(f"User {username} was added to the database and his disabled state is {disabled}", fg=typer.colors.GREEN)
     return typer.secho(f"Unsuccesfull add of the user {username}", fg=typer.colors.RED)
@@ -238,7 +216,33 @@ def user_delete(session, username:str):
             typer.secho(f"Deletion of {user.username} cancelled", fg=typer.colors.RED)
     else: 
         typer.secho("This user doesn't exist", fg=typer.colors.RED)
-    
+
+def user_update(session, username:str, newUsername:str, password:str,  disabled:bool, expirationDate:datetime.date):
+    password = get_password_hash(password)
+    code = database.update_user(session=session, username=username, newUsername=newUsername, password=password, disabled=disabled, expirationDate=expirationDate)
+    if "1" in code :
+        typer.secho(f"User {username} disabled state is now {disabled}", fg=typer.colors.GREEN)
+    if "2" in code : 
+        typer.secho(f"User {username} password has been changed", fg=typer.colors.GREEN)
+    if "3" in code :  
+        typer.secho(f"User {username} is now {newUsername}", fg=typer.colors.GREEN)
+    if "4" in code :
+        typer.secho(f"User {username} expiration date is now {expirationDate}")
+    if "5" in code : 
+        typer.secho(f"User {username} the new expiration date is before the old expiration date. If you want to perform this operation use the command changedate")
+    if not ("1" in code or "2" in code or "3" in code or "4" in code or "5" in code) :
+        typer.secho(f"Unsuccesfull modficiation of the user {username}", fg=typer.colors.RED)
+ 
+def user_activate(session, username:str):
+    if database.activate_user(session=session, username=username):
+        return typer.secho(f"User {username} was activated")
+    return typer.secho(f"Unsuccesfull activation of the user {username}", fg=typer.colors.RED)
+
+def user_deactivate(session, username:str):
+    if database.deactivate_user(session=session, username=username):
+        return typer.secho(f"User {username} was deactivated")
+    return typer.secho(f"Unsuccesfull deactivation of the user {username}", fg=typer.colors.RED)
+
 def user_change_expiration_date(session, username:str, expirationDate:datetime.date):
     if not database.check_expiration_date(session=session, username=username, expirationDate=expirationDate):
         if ask_confirmation_expiration_date(expirationDate):
@@ -252,6 +256,21 @@ def user_change_expiration_date(session, username:str, expirationDate:datetime.d
         typer.secho(f"User {user.username} expiration date is now {expirationDate}", fg=typer.color.GREEN)
         return True
 
+################ UTITLY FUNCTIONS ################
+
+def convert_string_to_date(date_string):
+    try:
+        day, month, year = map(int, date_string.split('/'))
+        new_date = datetime.date(year, month, day)
+        if new_date.year == year and new_date.month == month and new_date.day == day:
+            return new_date
+        else:
+            return None
+    except (ValueError, AttributeError):
+        return None
+    except:
+        return None
+    
 def ask_confirmation_expiration_date(expirationDate):
     confirmed = False
     valid_responses = {'yes', 'no'}
@@ -280,26 +299,17 @@ def ask_confirmation_delete_user(username):
             print("Invalid response. Answer with 'yes' ou 'no'.")
     return True
 
-def convert_string_to_date(date_string):
-    try:
-        day, month, year = map(int, date_string.split('/'))
-        new_date = datetime.date(year, month, day)
-        if new_date.year == year and new_date.month == month and new_date.day == day:
-            return new_date
-        else:
-            return None
-    except (ValueError, AttributeError):
-        return None
-    except:
-        return None
+def get_password_hash(password):
+    return pwd_context.hash(password)
 
 def connect_to_db():
     name=os.getenv('name')  
     password=os.getenv('password')
+    password = get_password_hash(password) #2nd hash of the admin password used to connect to the DB
     session=database.start_a_db_session(
         DB_Username_For_Admin=name,
         DB_Password_For_Admin=password,
-        DB_Name_For_Admin_User="astrolabium",
+        DB_Name_For_Admin_User="astrolabiumtest",
         DB_IP_adress="172.18.0.2"
         )
     return session
@@ -312,7 +322,11 @@ def auto_logout():
     os.system('bash')
     return exit
 
-
-
 if __name__ == "__main__":
     app()
+
+
+
+
+
+        

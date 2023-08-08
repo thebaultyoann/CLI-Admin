@@ -4,6 +4,7 @@ from sqlalchemy.orm import sessionmaker
 
 Base = declarative_base()
 
+#User class inside the database
 class User(Base):
     __tablename__ = "user"
     id = Column(Integer, primary_key=True)
@@ -12,6 +13,7 @@ class User(Base):
     activated = Column(Boolean)
     expiration_date = Column(Date)
 
+#Open a session
 def start_a_db_session(
     DB_Username_For_Admin:str,
     DB_Password_For_Admin:str,
@@ -22,6 +24,8 @@ def start_a_db_session(
     Session = sessionmaker(bind=engine)
     return Session()
 
+#Check if the
+# user is connected or not
 def test_credentials(
     DB_Username_For_Admin:str,
     DB_Password_For_Admin:str,
@@ -33,6 +37,7 @@ def test_credentials(
     engine.dispose()
     return
 
+################  ALL REQUESTS INSIDE THE DB ################
 def get_all_users(session):
     return session.query(User).all()
 
@@ -63,11 +68,11 @@ def add_user(session, username, password, disabled):
 
 def update_user(session, username, newUsername, password, disabled, expirationDate):
     user = session.query(User).filter(User.username == username).first()
-    code=[]
+    code=[] #the code will be returned to inform which modification have been made
     if user:
         if disabled==True or disabled==False:
             user.disabled = disabled
-            code.append("1")
+            code.append("1") 
         if password:
             user.password_hashed = password
             code.append("2")
@@ -118,3 +123,22 @@ def change_expiration_date(session, username, expirationDate):
     session.add(user)
     session.commit()
     return True
+
+# ADD ADMIN USER = last modification to this project, function created then deleted automatically. 
+# First ask for the root db name
+# Then ask for the root db password
+# Then ask for the future admin username and password
+# End by creating this admin user with the appropriate rights and deleting the full file that allowed to create him
+
+#### OR ####
+
+# we need to have : 
+# - db used 
+# - admin user/password used 
+# - root user/password
+# selection of rights is automatic here 
+
+
+
+
+
