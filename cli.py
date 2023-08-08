@@ -23,15 +23,15 @@ def login_required(function):
     def wrapper(*args, **kwargs):
         name=os.getenv('name')  
         password=os.getenv('password')
-        if user_authentificated(name=name,password=password):
+        if user_authentificated(username=name,password=password):
             return function(*args, **kwargs)
         else:
             return typer.secho(f"Wrong credentials", fg=typer.colors.RED)
     return wrapper
 
 #Function used to check the credentials on a specific route
-def user_authentificated(name:str, password:str):
-    if name==None or password==None:
+def user_authentificated(username:str, password:str):
+    if username==None or password==None:
         typer.secho(f"You need to login", fg=typer.colors.RED)
         return False
     password = get_password_hash(password) #2nd hash of the admin password used to connect to the DB
@@ -39,7 +39,7 @@ def user_authentificated(name:str, password:str):
         global database_name
         global container_name
         database.test_credentials(
-            DB_Username_For_Admin=name,
+            DB_Username_For_Admin=username,
             DB_Password_For_Admin=password,
             DB_Name_For_Users_Tables=database_name,
             DB_Container_Name=container_name
@@ -308,13 +308,13 @@ def get_password_hash(password):
     return pwd_context.hash(password)
 
 def connect_to_db():
-    name=os.getenv('name')  
+    username=os.getenv('username')  
     password=os.getenv('password')
     #password = get_password_hash(password) #2nd hash of the admin password used to connect to the DB
     global database_name
     global container_name
     session=database.start_a_db_session(
-        DB_Username_For_Admin=name,
+        DB_Username_For_Admin=username,
         DB_Password_For_Admin=password,
         DB_Name_For_Users_Tables=database_name,
         DB_Container_Name=container_name
