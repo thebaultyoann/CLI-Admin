@@ -14,6 +14,9 @@ app.add_typer(user_app, name="user")
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
+database_name = "espf_users"
+container_name = "mariadb"
+
 #Wrapper used to check the user connexion
 def login_required(function):
     @wraps(function)
@@ -33,11 +36,13 @@ def user_authentificated(name:str, password:str):
         return False
     password = get_password_hash(password) #2nd hash of the admin password used to connect to the DB
     try: 
+        global database_name
+        global container_name
         database.test_credentials(
             DB_Username_For_Admin=name,
             DB_Password_For_Admin=password,
-            DB_Name_For_Admin_User="astrolabiumtest",
-            DB_IP_adress="172.18.0.2"
+            DB_Name_For_Users_Tables=database_name,
+            DB_Container_Name=container_name
         )   
     except:
         return False
@@ -305,12 +310,14 @@ def get_password_hash(password):
 def connect_to_db():
     name=os.getenv('name')  
     password=os.getenv('password')
-    password = get_password_hash(password) #2nd hash of the admin password used to connect to the DB
+    #password = get_password_hash(password) #2nd hash of the admin password used to connect to the DB
+    global database_name
+    global container_name
     session=database.start_a_db_session(
         DB_Username_For_Admin=name,
         DB_Password_For_Admin=password,
-        DB_Name_For_Admin_User="astrolabiumtest",
-        DB_IP_adress="172.18.0.2"
+        DB_Name_For_Users_Tables=database_name,
+        DB_Container_Name=container_name
         )
     return session
 

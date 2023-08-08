@@ -17,10 +17,10 @@ class User(Base):
 def start_a_db_session(
     DB_Username_For_Admin:str,
     DB_Password_For_Admin:str,
-    DB_Name_For_Admin_User:str,
-    DB_IP_adress:str,
+    DB_Name_For_Users_Tables:str,
+    DB_Container_Name:str,
  ):
-    engine = create_engine("mariadb+mariadbconnector://"+DB_Username_For_Admin+":"+DB_Password_For_Admin+"@"+DB_IP_adress+":3306/"+DB_Name_For_Admin_User)
+    engine = create_engine("mariadb+mariadbconnector://"+DB_Username_For_Admin+":"+DB_Password_For_Admin+"@"+DB_Container_Name+":3306/"+DB_Name_For_Users_Tables)
     Session = sessionmaker(bind=engine)
     return Session()
 
@@ -29,10 +29,10 @@ def start_a_db_session(
 def test_credentials(
     DB_Username_For_Admin:str,
     DB_Password_For_Admin:str,
-    DB_Name_For_Admin_User:str,
-    DB_IP_adress:str,
+    DB_Name_For_Users_Tables:str,
+    DB_Container_Name:str,
     ):
-    engine = create_engine("mariadb+mariadbconnector://"+DB_Username_For_Admin+":"+DB_Password_For_Admin+"@"+DB_IP_adress+":3306/"+DB_Name_For_Admin_User)
+    engine = create_engine("mariadb+mariadbconnector://"+DB_Username_For_Admin+":"+DB_Password_For_Admin+"@"+DB_Container_Name+":3306/"+DB_Name_For_Users_Tables)
     engine.connect()
     engine.dispose()
     return
