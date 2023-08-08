@@ -45,7 +45,7 @@ def get_a_single_user(session, username):
     return session.query(User).filter(User.username == username).first()
      
 def get_users_by_activation(session,status):
-    return session.query(User).filter((User.disabled == status)).all()
+    return session.query(User).filter((User.activated == status)).all()
 
 def delete_user(session, username):
     user = session.query(User).filter(User.username == username).first()
@@ -56,22 +56,22 @@ def delete_user(session, username):
     else:
         return None
 
-def add_user(session, username, password, disabled):
+def add_user(session, username, password, activated):
     user = session.query(User).filter(User.username == username).first()
     if user:
         return False
     else:
-        new_user = User(username=username, password_hashed=password, disabled=disabled)
+        new_user = User(username=username, password_hashed=password, activated=activated)
         session.add(new_user)
         session.commit()
         return True
 
-def update_user(session, username, newUsername, password, disabled, expirationDate):
+def update_user(session, username, newUsername, password, activated, expirationDate):
     user = session.query(User).filter(User.username == username).first()
     code=[] #the code will be returned to inform which modification have been made
     if user:
-        if disabled==True or disabled==False:
-            user.disabled = disabled
+        if activated==True or activated==False:
+            user.activated = activated
             code.append("1") 
         if password:
             user.password_hashed = password
@@ -93,8 +93,8 @@ def update_user(session, username, newUsername, password, disabled, expirationDa
 
 def activate_user(session, username):
     user = session.query(User).filter(User.username == username).first()
-    if user.disabled == False:
-        user.disabled = True
+    if user.activated == False:
+        user.activated = True
         session.add(user)
         session.commit()
         return True
@@ -103,8 +103,8 @@ def activate_user(session, username):
 
 def deactivate_user(session, username):
     user = session.query(User).filter(User.username == username).first()
-    if user.disabled == True:
-        user.disabled = False
+    if user.activated == True:
+        user.activated = False
         session.add(user)
         session.commit()
         return True
