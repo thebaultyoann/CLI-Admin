@@ -6,6 +6,7 @@ import os
 import time
 import datetime
 import threading
+import docker
 import database
 
 app = typer.Typer()
@@ -14,7 +15,22 @@ app.add_typer(user_app, name="user")
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
+client = docker.from_env()
+
+def get_container_ip(container_name):
+    try:
+        container = client.containers.get(container_name)
+        networks = container.attrs['NetworkSettings']['Networks']
+        
+        # Assuming you're interested in the default bridge network
+        default_network = networks['bridge']
+        
+        return default_network['IPAddress']
+    except docker.errors.NotFound:
+        return None
+
 database_name = "espf_users"
+database_ip = get_container_ip(database_name)
 container_name = "mariadb"
 
 #Wrapper used to check the user connexion
@@ -36,12 +52,12 @@ def user_authentificated(username:str, password:str):
         return False
     password = get_password_hash(password) #2nd hash of the admin password used to connect to the DB
     try: 
-        global database_name
+        global database_ip
         global container_name
         database.test_credentials(
             DB_Username_For_Admin=username,
             DB_Password_For_Admin=password,
-            DB_Name_For_Users_Tables=database_name,
+            DB_Name_For_Users_Tables=database_ip,
             DB_Container_Name=container_name
         )   
     except:
@@ -311,12 +327,12 @@ def connect_to_db():
     username=os.getenv('username')  
     password=os.getenv('password')
     #password = get_password_hash(password) #2nd hash of the admin password used to connect to the DB
-    global database_name
+    global database_ip
     global container_name
     session=database.start_a_db_session(
         DB_Username_For_Admin=username,
         DB_Password_For_Admin=password,
-        DB_Name_For_Users_Tables=database_name,
+        DB_Name_For_Users_Tables=database_ip,
         DB_Container_Name=container_name
         )
     return session
