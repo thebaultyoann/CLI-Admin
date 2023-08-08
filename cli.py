@@ -282,9 +282,9 @@ def user_change_expiration_date(session, username:str, expirationDate:datetime.d
 
 ################ UTITLY FUNCTIONS ################
 
-def convert_string_to_date(date_string):
+def convert_string_to_date(date):
     try:
-        day, month, year = map(int, date_string.split('/'))
+        day, month, year = map(int, date('/'))
         new_date = datetime.date(year, month, day)
         if new_date.year == year and new_date.month == month and new_date.day == day:
             return new_date
