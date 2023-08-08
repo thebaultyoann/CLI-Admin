@@ -160,7 +160,7 @@ def user_deactivate_command(username:str) -> None:
 
 @user_app.command('changedate')
 @login_required
-def user_change_expiration_date(
+def user_update_expiration_date(
     username:str,
     expirationdate: Annotated[str, typer.Argument(help="The expiration date for the user, format: dd/mm/yyyy")]
     ) -> None:
@@ -216,15 +216,17 @@ def user_get(session, username:str):
         "ID.  ",
         "| Username  ",
         "| Activated  ",
+        "| Expiration Date",
     )
     headers = "".join(columns)
     typer.secho(headers, fg=typer.colors.BLUE, bold=True)
     typer.secho("-" * len(headers), fg=typer.colors.BLUE)
-    id, username, activated = user.id, user.username, user.activated
+    id, username, activated, expiration = user.id, user.username, user.activated, user.expiration_date
     typer.secho(
         f"{id}{(len(columns[0]) - len(str(id))) * ' '}"
         f"| ({username}){(len(columns[1]) - len(str(username)) - 4) * ' '}"
-        f"| {activated}{(len(columns[2]) - len(str(activated)) - 2) * ' '}",   
+        f"| {activated}{(len(columns[2]) - len(str(activated)) - 2) * ' '}"
+        f"| {expiration}{(len(columns[2]) - len(str(expiration)) - 2) * ' '}",     
         fg=typer.colors.BLUE,
     )
     typer.secho("-" * len(headers) + "\n", fg=typer.colors.BLUE)
@@ -242,20 +244,31 @@ def user_delete(session, username:str):
         typer.secho("This user doesn't exist", fg=typer.colors.RED)
 
 def user_update(session, username:str, newUsername:str, password:str,  activated:bool, expirationDate:datetime.date):
-    password = get_password_hash(password)
-    code = database.update_user(session=session, username=username, newUsername=newUsername, password=password, activated=activated, expirationDate=expirationDate)
-    if "1" in code :
-        typer.secho(f"User {username} activated state is now {activated}", fg=typer.colors.GREEN)
-    if "2" in code : 
-        typer.secho(f"User {username} password has been changed", fg=typer.colors.GREEN)
-    if "3" in code :  
-        typer.secho(f"User {username} is now {newUsername}", fg=typer.colors.GREEN)
-    if "4" in code :
-        typer.secho(f"User {username} expiration date is now {expirationDate}")
-    if "5" in code : 
-        typer.secho(f"User {username} the new expiration date is before the old expiration date. If you want to perform this operation use the command changedate")
-    if not ("1" in code or "2" in code or "3" in code or "4" in code or "5" in code) :
-        typer.secho(f"Unsuccesfull modficiation of the user {username}", fg=typer.colors.RED)
+    if newUsername:
+        if database.update_user_username(session=session, username=username, newUsername=newUsername):
+            typer.secho(f"User {username} is now {newUsername}", fg=typer.colors.GREEN)
+        typer.secho(f"Failure in the update of user {username} username as {newUsername}", fg=typer.colors.RED)
+    if password:
+        password = get_password_hash(password)        
+        if database.update_user_password(session=session, username=username, password=password):
+            typer.secho(f"User {username} password has been changed", fg=typer.colors.GREEN)
+        typer.secho(f"Failure in the update of user {username} password", fg=typer.colors.RED)
+    if activated or not activated: 
+        if database.update_user_activated(session=session, username=username, activated=activated):
+            typer.secho(f"User {username} activated state is now {activated}", fg=typer.colors.GREEN)
+        typer.secho(f"Failure in the update of user {username} activated state as : {activated}", fg=typer.colors.RED)
+    if expirationDate:
+        if expirationDate > datetime.date.today():
+            user = database.get_a_single_user(session=session, username=username)
+            if user:
+                if expirationDate > user.expiration_date:
+                    if database.update_user_expiration_date(session=session, username=username, expirationDate=expirationDate):
+                        typer.secho(f"User {username} expiration date is now {expirationDate}", fg=typer.colors.GREEN)
+                    typer.secho(f"Failure in the update of user {username} expiration date as : {expirationDate}", fg=typer.colors.RED)
+                typer.secho(f"User {username} : the new expiration date is before the old expiration date. If you want to perform this operation use the command changedate", fg=typer.colors.RED)
+            typer.secho(f"User {username} not found", fg=typer.colors.RED)
+        typer.secho(f"User {username} : the new expiration date is before today. If you want to perform this operation use the command changedate",fg=typer.colors.RED)
+    typer.secho(f"No modification of the user {username}", fg=typer.colors.RED)
  
 def user_activate(session, username:str):
     if database.activate_user(session=session, username=username):

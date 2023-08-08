@@ -65,31 +65,40 @@ def add_user(session, username, password, activated):
         session.add(new_user)
         session.commit()
         return True
-
-def update_user(session, username, newUsername, password, activated, expirationDate):
+    
+def update_user_username(session, username, newUsername):
     user = session.query(User).filter(User.username == username).first()
-    code=[] #the code will be returned to inform which modification have been made
     if user:
-        if activated==True or activated==False:
-            user.activated = activated
-            code.append("1") 
-        if password:
-            user.password_hashed = password
-            code.append("2")
-        if newUsername:
-            user.username = newUsername
-            code.append("3")
-        if expirationDate:
-            if check_expiration_date():
-                user.expiration_date = expirationDate
-                code.append("4")
-            else:
-                code.append("5")        
+        user.username = newUsername
         session.add(user)
-        session.commit()
-        return code
-    else:
-        return code
+        session.commmit()
+        return True
+    return False
+
+def update_user_password(session, username, password):
+    user = session.query(User).filter(User.username == username).first()
+    if user:
+        user.password = password
+        session.commmit()
+        return True
+    return False
+
+def update_user_activated(session, username, activated):
+    user = session.query(User).filter(User.username == username).first()
+    if user:
+        user.activated = activated
+        session.commmit()
+        return True
+    return False
+
+def update_user_expiration_date(session, username, expirationDate):
+    user = session.query(User).filter(User.username == username).first()
+    if user:
+        user.expiration_date = expirationDate
+        session.commmit()
+        return True
+    return False
+
 
 def activate_user(session, username):
     user = session.query(User).filter(User.username == username).first()
