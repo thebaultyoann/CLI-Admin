@@ -194,7 +194,7 @@ def user_list(session):
             f"{id}{(len(columns[0]) - len(str(id))) * ' '}"
             f"| ({username}){(len(columns[1]) - len(str(username)) - 4) * ' '}"
             f"| {activated}{(len(columns[2]) - len(str(activated)) - 2) * ' '}", 
-            f"| {expiration}{(len(columns[2]) - len(str(expiration)) - 2) * ' '}",   
+            f"| {expiration}{(4) * ' '}",   
             fg=typer.colors.BLUE,
         )
     typer.secho("-" * len(headers) + "\n", fg=typer.colors.BLUE)
