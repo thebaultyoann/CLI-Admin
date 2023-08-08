@@ -162,12 +162,12 @@ def user_deactivate_command(username:str) -> None:
 @login_required
 def user_change_expiration_date(
     username:str,
-    expirationDate: Annotated[str, typer.Argument(help="The expiration date for the user, format: dd/mm/yyyy")]
+    expirationdate: Annotated[str, typer.Argument(help="The expiration date for the user, format: dd/mm/yyyy")]
     ) -> None:
     session = connect_to_db()
-    expirationDate=convert_string_to_date(date=expirationDate)
-    if expirationDate:
-        user_change_expiration_date(session=session, username=username, expirationDate=expirationDate)
+    expirationdate=convert_string_to_date(date=expirationdate)
+    if expirationdate:
+        user_change_expiration_date(session=session, username=username, expirationDate=expirationdate)
     else:
         typer.secho(f"Wrong format for expiration date", fg=typer.colors.RED)
 
