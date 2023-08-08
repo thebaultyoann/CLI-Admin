@@ -50,7 +50,7 @@ def user_authentificated(username:str, password:str):
     if username==None or password==None:
         typer.secho(f"You need to login", fg=typer.colors.RED)
         return False
-    password = get_password_hash(password) #2nd hash of the admin password used to connect to the DB
+    #password = get_password_hash(password) #2nd hash of the admin password used to connect to the DB
     try: 
         global database_ip
         global container_name
@@ -71,7 +71,7 @@ def login(
     username: Annotated[str, typer.Option(prompt=True)], 
     password: Annotated[str, typer.Option(prompt=True, hide_input=True)]
     ) -> None: 
-    password = get_password_hash(password)  #1st hash of the admin password stored in an env variable
+    #password = get_password_hash(password)  #1st hash of the admin password stored in an env variable
     if user_authentificated(username=username, password=password):
         os.putenv('username',f'{username}')
         os.putenv('password',f'{password}')
