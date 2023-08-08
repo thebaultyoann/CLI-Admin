@@ -354,7 +354,7 @@ def connect_to_db():
     return session
 
 def auto_logout():
-    time.sleep(120)
+    time.sleep(300)
     os.putenv('username', '')
     os.putenv('password', '')
     typer.secho(f"You are now disconnected, if you want to keep using the CLI you need to reconnect", fg=typer.colors.RED)
