@@ -2,14 +2,14 @@
 sudo apt-get install python3-venv
 
 sudo apt install wget
-wget https://r.mariadb.com/downloads/mariadb_repo_setup
-echo "3a562a8861fc6362229314772c33c289d9096bafb0865ba4ea108847b78768d2  mariadb_repo_setup" \
-    | sha256sum -c -
-chmod +x mariadb_repo_setup
-sudo ./mariadb_repo_setup \
-   --mariadb-server-version="mariadb-10.6"
-
-sudo apt install libmariadb3 libmariadb-dev
+sudo wget https://dlm.mariadb.com/3216102/Connectors/c/connector-c-3.3.5/mariadb-connector-c-3.3.5-debian-buster-amd64.tar.gz
+tar -xzvf mariadb-connector-c-3.3.5-debian-buster-amd64.tar.gz
+cd mariadb-connector-c-3.3.5-debian-buster-amd64
+sudo cp lib/* /usr/lib/
+sudo cp include/* /usr/include/
+sudo ldconfig
+rm -r  mariadb-connector-c-3.3.5-debian-buster-amd64
+rm -r  mariadb-connector-c-3.3.5-debian-buster-amd64.tar.gz
 
 python3 -m venv venv
 
