@@ -38,9 +38,9 @@ container_name = "mariadb"
 def login_required(function):
     @wraps(function)
     def wrapper(*args, **kwargs):
-        name=os.getenv('username')  
+        username=os.getenv('username')  
         password=os.getenv('password')
-        if user_authentificated(username=name,password=password):
+        if user_authentificated(username=username,password=password):
             return function(*args, **kwargs)
         else:
             return typer.secho(f"Wrong credentials", fg=typer.colors.RED)
