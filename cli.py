@@ -8,7 +8,6 @@ import datetime
 import threading
 import docker
 import database
-import subprocess
 
 app = typer.Typer()
 user_app = typer.Typer()
@@ -30,13 +29,11 @@ pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 #     except docker.errors.NotFound:
 #         return None
 
-import subprocess
-database_ip = subprocess.run(["bash", "get_mariadb_ip.sh"])
-print(database_ip)
+with open("mariadb_ip", "r") as f:
+    database_ip = f.readline()
 
 database_name = "espf_users"
 #database_ip = get_container_ip(database_name)
-#database_ip = "172.18.0.2"
 container_name = "mariadb"
 
 #Wrapper used to check the user connexion
