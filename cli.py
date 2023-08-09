@@ -290,7 +290,7 @@ def user_update(session:Session, username:str, newUsername:str, password:str,  a
  
 def user_activate(session, username:str):
     if database.activate_user(session=session, username=username):
-        return typer.secho(f"User {username} was activated")
+        return typer.secho(f"User {username} was activated", fg=typer.colors.GREEN)
     return typer.secho(f"Unsuccesfull activation of the user {username}", fg=typer.colors.RED)
 
 def user_deactivate(session, username:str):
