@@ -156,6 +156,9 @@ def user_update_command(
 @user_app.command('activate')
 @login_required
 def user_activate_command(username:str) -> None:
+    """
+    Activate a user inside the database. Argument: USERNAME
+    """
     session = connect_to_db()
     user_activate(session=session, username=username)
 
