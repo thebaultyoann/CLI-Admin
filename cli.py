@@ -253,7 +253,7 @@ def user_update(session, username:str, newUsername:str, password:str,  activated
         if database.update_user_password(session=session, username=username, password=password):
             typer.secho(f"User {username} password has been changed", fg=typer.colors.GREEN)
         typer.secho(f"Failure in the update of user {username} password", fg=typer.colors.RED)
-    if activated or not activated: 
+    if activated: 
         if database.update_user_activated(session=session, username=username, activated=activated):
             typer.secho(f"User {username} activated state is now {activated}", fg=typer.colors.GREEN)
         typer.secho(f"Failure in the update of user {username} activated state as : {activated}", fg=typer.colors.RED)
