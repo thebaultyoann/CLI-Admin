@@ -79,6 +79,7 @@ def update_user_password(session: Session, username, password):
     user = session.query(User).filter(User.username == username).first()
     if user:
         user.password = password
+        session.add(user)
         session.commit()
         return True
     return False

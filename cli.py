@@ -226,7 +226,7 @@ def user_deactivate_command(
 @login_required
 def user_update_password(
     username:Annotated[str, typer.Argument(help="Username of the user")],
-    password: Annotated[str, typer.Option(prompt="The user password", help="Password of the user", hide_input=True)]
+    password: Annotated[str, typer.Option(prompt="The user new password", help="Password of the user", hide_input=True)]
     ):
     """
     Change the password of a user inside the database
