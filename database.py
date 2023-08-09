@@ -139,6 +139,13 @@ def change_expiration_date(session: Session, username, expirationDate):
     session.commit()
     return True
 
+def user_change_password(session : Session, username, password):
+    user = session.query(User).filter(User.username == username).first()
+    user.password = password
+    session.add(user)
+    session.commit()
+    return True
+
 # ADD ADMIN USER = last modification to this project, function created then deleted automatically. 
 # First ask for the root db name
 # Then ask for the root db password

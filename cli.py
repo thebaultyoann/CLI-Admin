@@ -166,18 +166,27 @@ def user_deactivate_command(username:str) -> None:
     session = connect_to_db()
     user_deactivate(session=session, username=username)
     
-@user_app.command('changedate')
+@user_app.command('password')
+@login_required
+def user_update_password(
+    username:str,
+    password: Annotated[str, typer.Option(prompt="The user password", hide_input=True)]
+    ):
+    session = connect_to_db()
+    user_change_password(session=session, username=username, password=password)
+
+
+
+@user_app.command('date')
 @login_required
 def user_update_expiration_date(
     username:str,
     expirationdate: Annotated[str, typer.Argument(help="The expiration date for the user, format: yyyy/mm/dd")]
     ) -> None:
     session = connect_to_db()
-    expirationdate=convert_string_to_date(date=expirationdate)
-    if expirationdate:
-        user_change_expiration_date(session=session, username=username, expirationDate=expirationdate)
-    else:
-        typer.secho(f"Wrong format for expiration date", fg=typer.colors.RED)
+    user_change_expiration_date(session = session, username=username, expirationDate=expirationdate)
+
+
 
 ################ FUNCTIONS USED TO LIGHTEN CLI COMMANDS CODE ################
 
@@ -219,10 +228,7 @@ def user_add(session, username:str, password:str, activated:bool, expirationDate
     return typer.secho(f"Unsuccesfull add of the user {username}", fg=typer.colors.RED)
 
 def user_get(session, username:str):
-    user = database.get_a_single_user(session=session, username=username)
-    if not user:
-        typer.secho("This user doesn't exist", fg=typer.colors.RED)
-        raise typer.Exit()
+    user = check_username(session, username)
     typer.secho("\nUser:\n", fg=typer.colors.BLUE, bold=True)
     columns = (
         "ID.  ",
@@ -245,17 +251,16 @@ def user_get(session, username:str):
     return True
 
 def user_delete(session, username:str):
+    check_username(session, username)
     user = database.get_a_single_user(session=session, username=username)
-    if user:
-        if ask_confirmation_delete_user:
-            user = database.delete_user(session=session, username=username)
-            typer.secho(f"User {user.username} have been delete", fg=typer.colors.GREEN)
-        else : 
-            typer.secho(f"Deletion of {user.username} cancelled", fg=typer.colors.RED)
-    else: 
-        typer.secho("This user doesn't exist", fg=typer.colors.RED)
+    if ask_confirmation_delete_user:
+        user = database.delete_user(session=session, username=username)
+        typer.secho(f"User {user.username} have been delete", fg=typer.colors.GREEN)
+    else : 
+        typer.secho(f"Deletion of {user.username} cancelled", fg=typer.colors.RED)
 
 def user_update(session:Session, username:str, newUsername:str, password:str,  activated:bool, expirationDate:datetime.date):
+    check_username(session, username)
     check=[]
     if newUsername:
         if database.update_user_username(session=session, username=username, newUsername=newUsername):
@@ -300,27 +305,43 @@ def user_update(session:Session, username:str, newUsername:str, password:str,  a
         return typer.secho(f"No modification of the user {username}", fg=typer.colors.RED)
  
 def user_activate(session, username:str):
+    check_username(session, username)
     if database.activate_user(session=session, username=username):
         return typer.secho(f"User {username} was activated", fg=typer.colors.GREEN)
     return typer.secho(f"Unsuccesfull activation of the user {username}", fg=typer.colors.RED)
 
 def user_deactivate(session, username:str):
+    check_username(session, username)
     if database.deactivate_user(session=session, username=username):
         return typer.secho(f"User {username} was deactivated", fg=typer.colors.GREEN)
     return typer.secho(f"Unsuccesfull deactivation of the user {username}", fg=typer.colors.RED)
 
-def user_change_expiration_date(session, username:str, expirationDate:datetime.date):
-    if not database.check_expiration_date(session=session, username=username, expirationDate=expirationDate):
-        if ask_confirmation_expiration_date(session = session, expirationDate= expirationDate, username=username):
-            database.change_expiration_date(session=session, username=username, expirationDate=expirationDate)
-            typer.secho(f"User {username} expiration date is now {expirationDate}", fg=typer.colors.GREEN)
-        else:
-            typer.secho("Modification of expiration date cancelled", fg=typer.colors.RED)
-            return False
-    else: 
-        if database.change_expiration_date(session=session, username=username, expirationDate=expirationDate): 
-            typer.secho(f"User {username} expiration date is now {expirationDate}", fg=typer.colors.GREEN)
-            return True
+def user_change_expiration_date(session, username:str, expirationDate:str):
+    check_username(session, username)
+    expirationdate=convert_string_to_date(date=expirationdate)
+    if expirationdate:
+        if not database.check_expiration_date(session=session, username=username, expirationDate=expirationDate):
+            if ask_confirmation_expiration_date(session = session, expirationDate= expirationDate, username=username):
+                database.change_expiration_date(session=session, username=username, expirationDate=expirationDate)
+                typer.secho(f"User {username} expiration date is now {expirationDate}", fg=typer.colors.GREEN)
+            else:
+                typer.secho("Modification of expiration date cancelled", fg=typer.colors.RED)
+                return False
+        else: 
+            if database.change_expiration_date(session=session, username=username, expirationDate=expirationDate): 
+                typer.secho(f"User {username} expiration date is now {expirationDate}", fg=typer.colors.GREEN)
+                return True        
+    else:
+        typer.secho(f"Wrong format for expiration date", fg=typer.colors.RED)
+
+
+def user_change_password(session, username, password):
+    check_username(session, username)
+    get_password_hash(password)
+    if database.user_change_password(session=session, username=username, password=password):
+        typer.secho(f"Password of {username} was changed", fg=typer.colors.GREEN)
+    else:
+        typer.secho(f"{username} not found", fg=typer.colors.RED)
 
 ################ UTITLY FUNCTIONS ################
 
@@ -362,6 +383,13 @@ def ask_confirmation_delete_user(username):
         else:
             print("Invalid response. Answer with 'yes' ou 'no'.")
     return True
+
+def check_username(session, username):
+    user = database.get_a_single_user(session=session, username=username)
+    if not user:
+        typer.secho("This user doesn't exist", fg=typer.colors.RED)
+        raise typer.Exit()
+    return user
 
 def get_password_hash(password):
     return pwd_context.hash(password)
