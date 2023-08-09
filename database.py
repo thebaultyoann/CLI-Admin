@@ -97,7 +97,7 @@ def update_user_expiration_date(session: Session, username, expirationDate):
     if user:
         user.expiration_date = expirationDate
         session.add(user)
-        session.commmit()
+        session.commit()
         return True
     return False
 
