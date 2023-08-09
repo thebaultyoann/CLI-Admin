@@ -2,7 +2,6 @@ import typer
 from functools import wraps
 from typing_extensions import Annotated
 from passlib.context import CryptContext
-from sqlalchemy.orm import Session
 import os
 import time
 import datetime
@@ -151,7 +150,7 @@ def user_update_command(
             "-expd")
         ]=None
     ) -> None:
-    session : Session = connect_to_db()
+    session = connect_to_db()
     user_update(session=session, username=username, newUsername = newUsername, password=newPassword, activated=activate, expirationDate=expirationDate)
         
 @user_app.command('activate')
@@ -174,7 +173,6 @@ def user_update_password(
     ):
     session = connect_to_db()
     user_change_password(session=session, username=username, password=password)
-
 
 
 @user_app.command('date')
