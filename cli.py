@@ -104,7 +104,7 @@ def user() -> None:
 @login_required
 def user_add_command(
     username:str, 
-    password: Annotated[str, typer.Option(prompt=True, hide_input=True)], 
+    password: Annotated[str, typer.Option(prompt="The user password", hide_input=True)], 
     activated: Annotated[bool, typer.Option(
             "--activated/--deactivated",
             "-a/-d")
