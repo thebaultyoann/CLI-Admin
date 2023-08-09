@@ -262,7 +262,7 @@ def user_update(session, username:str, newUsername:str, password:str,  activated
         if expirationDate > datetime.date.today():
             user = database.get_a_single_user(session=session, username=username)
             if user:
-                if expirationDate > user.expiration_date:
+                if not user.expiration_date or expirationDate > user.expiration_date:
                     if database.update_user_expiration_date(session=session, username=username, expirationDate=expirationDate):
                         typer.secho(f"User {username} expiration date is now {expirationDate}", fg=typer.colors.GREEN)
                     typer.secho(f"Failure in the update of user {username} expiration date as : {expirationDate}", fg=typer.colors.RED)
