@@ -325,7 +325,7 @@ def ask_confirmation_expiration_date(expirationDate):
     confirmed = False
     valid_responses = {'yes', 'no'}
     while not confirmed:
-        user_input = input(f"You are going to update to an expiration date which is closer than the actual one : {expirationDate}, do you confirm (yes/no): ").lower()
+        user_input = input(f"You are going to update to an expiration date which is previous the actual one : {expirationDate}, do you confirm (yes/no): ").lower()
         if user_input in valid_responses:
             if user_input == 'yes':
                 confirmed = True
