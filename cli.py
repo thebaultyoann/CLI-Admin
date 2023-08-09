@@ -245,19 +245,26 @@ def user_delete(session, username:str):
         typer.secho("This user doesn't exist", fg=typer.colors.RED)
 
 def user_update(session:Session, username:str, newUsername:str, password:str,  activated:bool, expirationDate:datetime.date):
+    check=[]
     if newUsername:
         if database.update_user_username(session=session, username=username, newUsername=newUsername):
             typer.secho(f"User {username} is now {newUsername}", fg=typer.colors.GREEN)
-        typer.secho(f"Failure in the update of user {username} username as {newUsername}", fg=typer.colors.RED)
+        else: 
+            typer.secho(f"Failure in the update of user {username} username as {newUsername}", fg=typer.colors.RED)
+            check.append(1)
     if password:
         password = get_password_hash(password)        
         if database.update_user_password(session=session, username=username, password=password):
             typer.secho(f"User {username} password has been changed", fg=typer.colors.GREEN)
-        typer.secho(f"Failure in the update of user {username} password", fg=typer.colors.RED)
+        else: 
+            typer.secho(f"Failure in the update of user {username} password", fg=typer.colors.RED)
+            check.append(2)
     if activated: 
         if database.update_user_activated(session=session, username=username, activated=activated):
             typer.secho(f"User {username} activated state is now {activated}", fg=typer.colors.GREEN)
-        typer.secho(f"Failure in the update of user {username} activated state as : {activated}", fg=typer.colors.RED)
+        else: 
+            typer.secho(f"Failure in the update of user {username} activated state as : {activated}", fg=typer.colors.RED)
+            check.append(3)
     if expirationDate:
         expirationDate=convert_string_to_date(expirationDate)
         if expirationDate > datetime.date.today():
@@ -265,12 +272,19 @@ def user_update(session:Session, username:str, newUsername:str, password:str,  a
             if user:
                 if not user.expiration_date or expirationDate > user.expiration_date:
                     if database.update_user_expiration_date(session=session, username=username, expirationDate=expirationDate):
-                        typer.secho(f"User {username} expiration date is now {expirationDate}", fg=typer.colors.GREEN)
-                    typer.secho(f"Failure in the update of user {username} expiration date as : {expirationDate}", fg=typer.colors.RED)
-                typer.secho(f"User {username} : the new expiration date is before the old expiration date. If you want to perform this operation use the command changedate", fg=typer.colors.RED)
-            typer.secho(f"User {username} not found", fg=typer.colors.RED)
-        typer.secho(f"User {username} : the new expiration date is before today. If you want to perform this operation use the command changedate",fg=typer.colors.RED)
-    typer.secho(f"No modification of the user {username}", fg=typer.colors.RED)
+                        return typer.secho(f"User {username} expiration date is now {expirationDate}", fg=typer.colors.GREEN)
+                    else :
+                        return typer.secho(f"Failure in the update of user {username} expiration date as : {expirationDate}", fg=typer.colors.RED)
+                else :
+                    return typer.secho(f"User {username} : the new expiration date is before the old expiration date. If you want to perform this operation use the command changedate", fg=typer.colors.RED)
+            else:
+                return typer.secho(f"User {username} not found", fg=typer.colors.RED)
+        else:
+            return typer.secho(f"User {username} : the new expiration date is before today. If you want to perform this operation use the command changedate",fg=typer.colors.RED)
+    if not newUsername and not password and not activated and not expirationDate:
+        return typer.secho(f"No modification of the user {username}", fg=typer.colors.RED)
+    if 1 in check and 2 in check and 3 in check:
+        return typer.secho(f"No modification of the user {username}", fg=typer.colors.RED)
  
 def user_activate(session, username:str):
     if database.activate_user(session=session, username=username):
