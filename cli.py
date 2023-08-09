@@ -69,8 +69,8 @@ def user_authentificated(username:str, password:str):
 
 @app.command("login")
 def login(
-    username: Annotated[str, typer.Option(prompt=True)], 
-    password: Annotated[str, typer.Option(prompt=True, hide_input=True)]
+    username: Annotated[str, typer.Option(prompt=True, help="Username to connect to the db")], 
+    password: Annotated[str, typer.Option(prompt=True, hide_input=True, help="Password to connect to the db")]
     ) -> None: 
     #password = get_password_hash(password)  #1st hash of the admin password stored in an env variable
     if user_authentificated(username=username, password=password):
@@ -96,6 +96,9 @@ def logout() -> None:
 @user_app.command("list")
 @login_required
 def user() -> None:
+    """
+    List all the users inside the database. 
+    """
     session = connect_to_db()
     user_list(session=session)
 
@@ -106,13 +109,17 @@ def user_add_command(
     password: Annotated[str, typer.Option(prompt="The user password", hide_input=True)], 
     activated: Annotated[bool, typer.Option(
             "--activated/--deactivated",
-            "-a/-d")
+            "-a/-d",
+            help="Activate or deactivate the user (no input)")
         ]=False,
     expirationDate : Annotated[str, typer.Option(
-        "--expirationdate",
-        "-expd")
-    ]=None
+            "--expirationdate",
+            "-expd",
+            help="Give an expiration date for the user, format : yyyy-mm-dd ")]=None
     ) -> None:
+    """
+    Add a single user to the database. 
+    """
     session = connect_to_db()
     user_add(session=session, username=username, password=password, activated=activated, expirationDate=expirationDate)
         
@@ -121,6 +128,9 @@ def user_add_command(
 def user_get_command(
      username:Annotated[str, typer.Argument(help="Username of the user")]
     ) -> None:
+    """
+    Return a single user from the database.
+    """
     session = connect_to_db()
     user_get(session=session, username=username)
 
@@ -129,6 +139,10 @@ def user_get_command(
 def user_delete_command(
     username:Annotated[str, typer.Argument(help="Username of the user")]
     ) -> None:
+    """
+    Delete user from the database. 
+    Need confirmation.
+    """
     session = connect_to_db()
     user_delete(session=session, username=username)
 
@@ -144,22 +158,22 @@ def user_update_command(
     newPassword: Annotated[str, typer.Option(
             "--newpassword",
             "-pw",
-            help = "New password of the user",
+            help = "New password of the user (if you want to hide password :  no input)",
             hide_input=True)
         ]=None, 
     activate: Annotated[bool, typer.Option(
             "--activate/--deactivate",
             "-a/-d",
-            help="New state of the user")
+            help="New state of the user (no input)")
         ]=None,
     expirationDate : Annotated[str, typer.Option(
             "--expirationdate",
             "-expd",
-            help="New expiration date of the user, format : yyyy-mm-dd")
+            help="New expiration date of the user, format : yyyy-mm-dd, new date has to be superior to  previous one")
         ]=None
     ) -> None:
     """
-    Update user information inside the database. Each argument is optional
+    Update user information inside the database. E==
     """
     session = connect_to_db()
     user_update(session=session, username=username, newUsername = newUsername, password=newPassword, activated=activate, expirationDate=expirationDate)
@@ -206,7 +220,8 @@ def user_update_expiration_date(
     expirationdate: Annotated[str, typer.Argument(help="The expiration date for the user, format: yyyy/mm/dd")]
     ) -> None:
     """
-    Change the expiration date of a user inside the database
+    Change the expiration date of a user inside the database. 
+    If new date is inferior to previous date, need confirmation.
     """
     session = connect_to_db()
     user_change_expiration_date(session = session, username=username, expirationDate=expirationdate)
