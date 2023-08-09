@@ -318,8 +318,8 @@ def user_deactivate(session, username:str):
 
 def user_change_expiration_date(session, username:str, expirationDate:str):
     check_username(session, username)
-    expirationdate=convert_string_to_date(date=expirationdate)
-    if expirationdate:
+    expirationDate=convert_string_to_date(date=expirationDate)
+    if expirationDate:
         if not database.check_expiration_date(session=session, username=username, expirationDate=expirationDate):
             if ask_confirmation_expiration_date(session = session, expirationDate= expirationDate, username=username):
                 database.change_expiration_date(session=session, username=username, expirationDate=expirationDate)
