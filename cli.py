@@ -145,7 +145,7 @@ def user_update_command(
         ]=None
     ) -> None:
     session : Session = connect_to_db()
-    user_update(session=session, username=username, newUsername = newUsername, password=newPassword, activated=deactivate, expirationDate=expirationDate)
+    user_update(session=session, username=username, newUsername = newUsername, password=newPassword, activated=activate, expirationDate=expirationDate)
         
 @user_app.command('activate')
 @login_required
