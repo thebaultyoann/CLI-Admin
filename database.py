@@ -87,6 +87,7 @@ def update_user_activated(session: Session, username, activated):
     user = session.query(User).filter(User.username == username).first()
     if user:
         user.activated = activated
+        session.add(user)
         session.commmit()
         return True
     return False
