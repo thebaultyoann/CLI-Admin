@@ -71,7 +71,7 @@ def update_user_username(session: Session, username, newUsername):
     if user:
         user.username = newUsername
         session.add(user)
-        session.commmit()
+        session.commit()
         return True
     return False
 
@@ -79,7 +79,7 @@ def update_user_password(session: Session, username, password):
     user = session.query(User).filter(User.username == username).first()
     if user:
         user.password = password
-        session.commmit()
+        session.commit()
         return True
     return False
 
@@ -88,7 +88,7 @@ def update_user_activated(session: Session, username, activated):
     if user:
         user.activated = activated
         session.add(user)
-        session.commmit()
+        session.commit()
         return True
     return False
 
