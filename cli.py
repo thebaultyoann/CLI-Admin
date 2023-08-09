@@ -31,8 +31,7 @@ pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 #         return None
 
 import subprocess
-
-database_ip = subprocess.run(["bash", "get_mariadb_ip.sh"], capture_output=True, text=True)
+database_ip = subprocess.run(["bash", "get_mariadb_ip.sh"])
 print(database_ip)
 
 database_name = "espf_users"
