@@ -187,9 +187,12 @@ def user_update_password(
 @user_app.command('date')
 @login_required
 def user_update_expiration_date(
-    username:str,
+    username:Annotated[str, typer.Argument(help="Username of the user")],
     expirationdate: Annotated[str, typer.Argument(help="The expiration date for the user, format: yyyy/mm/dd")]
     ) -> None:
+    """
+    Change the expiration date of a user inside the database
+    """
     session = connect_to_db()
     user_change_expiration_date(session = session, username=username, expirationDate=expirationdate)
 
