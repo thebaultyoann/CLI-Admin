@@ -157,12 +157,12 @@ def user_activate_command(username:str) -> None:
 def user_deactivate_command(username:str) -> None:
     session = connect_to_db()
     user_deactivate(session=session, username=username)
-
+    
 @user_app.command('changedate')
 @login_required
 def user_update_expiration_date(
     username:str,
-    expirationdate: Annotated[str, typer.Argument(help="The expiration date for the user, format: dd/mm/yyyy")]
+    expirationdate: Annotated[str, typer.Argument(help="The expiration date for the user, format: yyyy/mm/dd")]
     ) -> None:
     session = connect_to_db()
     expirationdate=convert_string_to_date(date=expirationdate)
@@ -298,9 +298,8 @@ def user_change_expiration_date(session, username:str, expirationDate:datetime.d
 
 def convert_string_to_date(date):
     try:
-        day, month, year = map(int, date('/'))
-        print(day, month, year)
-        new_date = datetime.date(day, month, year)
+        year, month, day = date.split('/')
+        new_date = datetime.date(int(year), int(month), int(day))
         typer.secho(new_date)
         return new_date
     except (ValueError, AttributeError):
