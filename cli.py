@@ -399,7 +399,7 @@ def user_change_expiration_date(session, username:str, expirationDate:str):
 
 def user_change_password(session, username, password):
     check_username(session, username)
-    get_password_hash(password)
+    password = get_password_hash(password)
     if database.user_change_password(session=session, username=username, password=password):
         typer.secho(f"Password of {username} was changed", fg=typer.colors.GREEN)
     else:
