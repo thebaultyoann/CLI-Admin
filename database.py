@@ -143,7 +143,6 @@ def change_expiration_date(session: Session, username, expirationDate):
 def user_change_password(session : Session, username, password):
     user = session.query(User).filter(User.username == username).first()
     user.password = password
-    session.add(user)
     session.commit()
     return True
 
