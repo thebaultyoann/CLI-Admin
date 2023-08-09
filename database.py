@@ -122,7 +122,7 @@ def deactivate_user(session, username):
 
 def check_expiration_date(session, username, expirationDate):
     user = session.query(User).filter(User.username == username).first()
-    if user.expiration_date >= expirationDate:
+    if not user.expiration_date or user.expiration_date >= expirationDate:
         return False
     return True
 
