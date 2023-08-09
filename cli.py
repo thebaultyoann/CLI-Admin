@@ -305,9 +305,10 @@ def user_change_expiration_date(session, username:str, expirationDate:datetime.d
             typer.secho("Modification of expiration date cancelled", fg=typer.colors.RED)
             return False
     else: 
-        database.change_expiration_date(session=session, username=username, expirationDate=expirationDate)
-        typer.secho(f"User {user.username} expiration date is now {expirationDate}", fg=typer.color.GREEN)
-        return True
+        if database.change_expiration_date(session=session, username=username, expirationDate=expirationDate):
+            user = database.get_a_single_user(session=session, username=username)
+            typer.secho(f"User {user.username} expiration date is now {expirationDate}", fg=typer.color.GREEN)
+            return True
 
 ################ UTITLY FUNCTIONS ################
 
