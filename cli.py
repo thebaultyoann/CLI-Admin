@@ -281,7 +281,7 @@ def user_update(session:Session, username:str, newUsername:str, password:str,  a
                 return typer.secho(f"User {username} not found", fg=typer.colors.RED)
         else:
             return typer.secho(f"User {username} : the new expiration date is before today. If you want to perform this operation use the command changedate",fg=typer.colors.RED)
-    if not newUsername and not password and not activated and not expirationDate:
+    if not newUsername and not password and not expirationDate and activated!=True and activated!=False:
         return typer.secho(f"No modification of the user {username}", fg=typer.colors.RED)
     if 1 in check and 2 in check and 3 in check:
         return typer.secho(f"No modification of the user {username}", fg=typer.colors.RED)
