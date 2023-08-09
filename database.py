@@ -78,7 +78,7 @@ def update_user_username(session: Session, username, newUsername):
 def update_user_password(session: Session, username, password):
     user = session.query(User).filter(User.username == username).first()
     if user:
-        user.password = password
+        user.password_hashed = password
         session.add(user)
         session.commit()
         return True
@@ -142,7 +142,7 @@ def change_expiration_date(session: Session, username, expirationDate):
 
 def user_change_password(session : Session, username, password):
     user = session.query(User).filter(User.username == username).first()
-    user.password = password
+    user.password_hashed = password
     session.add(user)
     session.commit()
     return True
