@@ -267,6 +267,8 @@ def user_update(session:Session, username:str, newUsername:str, password:str,  a
             check.append(3)
     if expirationDate:
         expirationDate=convert_string_to_date(expirationDate)
+        if expirationDate == None:
+            return typer.secho(f"Wrong format for expiration date", fg=typer.colors.RED)
         if expirationDate > datetime.date.today():
             user = database.get_a_single_user(session=session, username=username)
             if user:
