@@ -299,7 +299,7 @@ def user_change_expiration_date(session, username:str, expirationDate:datetime.d
 def convert_string_to_date(date):
     try:
         day, month, year = map(int, date('/'))
-        typer.secho(day, month, year)
+        print(day, month, year)
         new_date = datetime.date(day, month, year)
         typer.secho(new_date)
         return new_date
