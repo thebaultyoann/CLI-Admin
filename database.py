@@ -56,12 +56,12 @@ def delete_user(session: Session, username):
     else:
         return None
 
-def add_user(session: Session, username, password, activated):
+def add_user(session: Session, username, password, activated, expirationDate):
     user = session.query(User).filter(User.username == username).first()
     if user:
         return False
     else:
-        new_user = User(username=username, password_hashed=password, activated=activated)
+        new_user = User(username=username, password_hashed=password, activated=activated, expiration_date=expirationDate)
         session.add(new_user)
         session.commit()
         return True

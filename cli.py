@@ -105,10 +105,11 @@ def user() -> None:
 def user_add_command(
     username:str, 
     password: Annotated[str, typer.Option(prompt="The client password", hide_input=True)], 
-    activated: Annotated[bool, typer.Argument()]=False
+    activated: Annotated[bool, typer.Argument()]=False,
+    expiration_date: Annotated[str, typer.Argument()]=None
     ) -> None:
     session = connect_to_db()
-    user_add(session=session, username=username, password=password, activated=activated)
+    user_add(session=session, username=username, password=password, activated=activated, expirationDate=expiration_date)
         
 @user_app.command("get")
 @login_required
@@ -201,10 +202,14 @@ def user_list(session):
     typer.secho("-" * len(headers) + "\n", fg=typer.colors.BLUE)
     return True
 
-def user_add(session, username:str, password:str, activated:bool):
+def user_add(session, username:str, password:str, activated:bool, expirationDate:str):
     password = get_password_hash(password)
-    if database.add_user(session=session, username=username, password=password, activated=activated):
-        return typer.secho(f"User {username} was added to the database and his activated state is {activated}", fg=typer.colors.GREEN)
+    if expirationDate: 
+        expirationDate = convert_string_to_date(expirationDate)
+        if not expirationDate:
+            return typer.secho(f"Wrong format for expiration date", fg=typer.colors.RED)
+    if database.add_user(session=session, username=username, password=password, activated=activated, expirationDate=expirationDate):
+        return typer.secho(f"User {username} was added to the database, his activated state is {activated}, his expiration date is {expirationDate}", fg=typer.colors.GREEN)
     return typer.secho(f"Unsuccesfull add of the user {username}", fg=typer.colors.RED)
 
 def user_get(session, username:str):
