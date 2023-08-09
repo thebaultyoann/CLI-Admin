@@ -104,9 +104,15 @@ def user() -> None:
 @login_required
 def user_add_command(
     username:str, 
-    password: Annotated[str, typer.Option(prompt="The client password", hide_input=True)], 
-    activated: Annotated[bool, typer.Argument()]=False,
-    expiration_date: Annotated[str, typer.Argument()]=None
+    password: Annotated[str, typer.Option(prompt="The client password", prompt=True, hide_input=True)], 
+    activated: Annotated[bool, typer.Option(
+            "--activated/--deactivated",
+            "-a/-d")
+        ]=False,
+    expirationDate : Annotated[str, typer.Option(
+        "--expirationdate",
+        "-expd")
+    ]=None
     ) -> None:
     session = connect_to_db()
     user_add(session=session, username=username, password=password, activated=activated, expirationDate=expiration_date)
