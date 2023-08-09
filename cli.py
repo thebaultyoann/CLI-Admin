@@ -157,7 +157,7 @@ def user_update_command(
 @login_required
 def user_activate_command(username:str) -> None:
     """
-    Activate a user inside the database. Argument: USERNAME
+    Activate a user inside the database
     """
     session = connect_to_db()
     user_activate(session=session, username=username)
@@ -165,15 +165,21 @@ def user_activate_command(username:str) -> None:
 @user_app.command('deactivate')
 @login_required
 def user_deactivate_command(username:str) -> None:
+    """
+    Deactivate a user inside the database
+    """
     session = connect_to_db()
     user_deactivate(session=session, username=username)
     
 @user_app.command('password')
 @login_required
 def user_update_password(
-    username:str,
-    password: Annotated[str, typer.Option(prompt="The user password", hide_input=True)]
+    username:Annotated[str, typer.Argument(help="Username of the user")],
+    password: Annotated[str, typer.Option(prompt="The user password", help="Password of the user", hide_input=True)]
     ):
+    """
+    Change the password of a user inside the database
+    """
     session = connect_to_db()
     user_change_password(session=session, username=username, password=password)
 
