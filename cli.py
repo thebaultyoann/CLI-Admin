@@ -69,8 +69,17 @@ def user_authentificated(username:str, password:str):
 
 @app.command("login")
 def login(
-    username: Annotated[str, typer.Option(prompt=True, help="Username to connect to the db")], 
-    password: Annotated[str, typer.Option(prompt=True, hide_input=True, help="Password to connect to the db")]
+    username: Annotated[str, typer.Option(
+        "-u",
+        "--username",
+        prompt=True, 
+        help="Username to connect to the db")], 
+    password: Annotated[str, typer.Option(
+        "-pw",
+        "--password",
+        prompt=True, 
+        hide_input=True, 
+        help="Password to connect to the db")]
     ) -> None: 
     #password = get_password_hash(password)  #1st hash of the admin password stored in an env variable
     if user_authentificated(username=username, password=password):
@@ -106,7 +115,12 @@ def user() -> None:
 @login_required
 def user_add_command(
     username:str, 
-    password: Annotated[str, typer.Option(prompt="The user password", hide_input=True)], 
+    password: Annotated[str, typer.Option(
+            "--password",
+            "-p",
+            prompt="The user password", 
+            hide_input=True)
+        ], 
     activated: Annotated[bool, typer.Option(
             "--activated/--deactivated",
             "-a/-d",
