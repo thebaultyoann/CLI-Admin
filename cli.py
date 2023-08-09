@@ -115,7 +115,7 @@ def user_add_command(
     ]=None
     ) -> None:
     session = connect_to_db()
-    user_add(session=session, username=username, password=password, activated=activated, expirationDate=expiration_date)
+    user_add(session=session, username=username, password=password, activated=activated, expirationDate=expirationDate)
         
 @user_app.command("get")
 @login_required
