@@ -122,7 +122,7 @@ def deactivate_user(session: Session, username):
     else:
         return False
 
-def user_expiration_date(session: Session, username, expirationDate):
+def user_expiration_date(session: Session, username):
     user = session.query(User).filter(User.username == username).first()
     return user.expiration_date
 
