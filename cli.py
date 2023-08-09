@@ -258,6 +258,7 @@ def user_update(session, username:str, newUsername:str, password:str,  activated
             typer.secho(f"User {username} activated state is now {activated}", fg=typer.colors.GREEN)
         typer.secho(f"Failure in the update of user {username} activated state as : {activated}", fg=typer.colors.RED)
     if expirationDate:
+        expirationDate=convert_string_to_date(expirationDate)
         if expirationDate > datetime.date.today():
             user = database.get_a_single_user(session=session, username=username)
             if user:
