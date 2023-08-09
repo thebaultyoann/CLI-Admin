@@ -298,7 +298,7 @@ def user_deactivate(session, username:str):
 
 def user_change_expiration_date(session, username:str, expirationDate:datetime.date):
     if not database.check_expiration_date(session=session, username=username, expirationDate=expirationDate):
-        if ask_confirmation_expiration_date(expirationDate):
+        if ask_confirmation_expiration_date(expirationDate, username):
             database.change_expiration_date(session=session, username=username, expirationDate=expirationDate)
             typer.secho(f"User {username} expiration date is now {expirationDate}", fg=typer.colors.GREEN)
         else:
@@ -321,11 +321,12 @@ def convert_string_to_date(date:str):
     except:
         return None
     
-def ask_confirmation_expiration_date(expirationDate):
+def ask_confirmation_expiration_date(expirationDate, username):
     confirmed = False
     valid_responses = {'yes', 'no'}
     while not confirmed:
-        user_input = input(f"You are going to update to an expiration date which is previous the actual one : {expirationDate}, do you confirm (yes/no): ").lower()
+        oldExpirationDate = database.user_expiration_date(username=username)
+        user_input = input(f"You are going to update to an expiration date {expirationDate} which is before the actual one {oldExpirationDate}, do you confirm (yes/no): ").lower()
         if user_input in valid_responses:
             if user_input == 'yes':
                 confirmed = True
