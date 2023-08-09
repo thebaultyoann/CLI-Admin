@@ -238,7 +238,7 @@ def user_delete(session, username:str):
     if user:
         if ask_confirmation_delete_user:
             user = database.delete_user(session=session, username=username)
-            typer.secho(f"User {user.username} have been delete", fg=typer.color.GREEN)
+            typer.secho(f"User {user.username} have been delete", fg=typer.colors.GREEN)
         else : 
             typer.secho(f"Deletion of {user.username} cancelled", fg=typer.colors.RED)
     else: 
