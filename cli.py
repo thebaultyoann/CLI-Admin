@@ -135,9 +135,9 @@ def user_update_command(
             "-pw",
             hide_input=True)
         ]=None, 
-    deactivate: Annotated[bool, typer.Option(
-            "--deactivate/--activate",
-            "-d/-a")
+    activate: Annotated[bool, typer.Option(
+            "--activate/--deactivate",
+            "-a/-d")
         ]=None,
     expirationDate : Annotated[str, typer.Option(
             "--expirationdate",
@@ -259,7 +259,7 @@ def user_update(session:Session, username:str, newUsername:str, password:str,  a
         else: 
             typer.secho(f"Failure in the update of user {username} password", fg=typer.colors.RED)
             check.append(2)
-    if activated: 
+    if activated==True or activated==False: 
         if database.update_user_activated(session=session, username=username, activated=activated):
             typer.secho(f"User {username} activated state is now {activated}", fg=typer.colors.GREEN)
         else: 
