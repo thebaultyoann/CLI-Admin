@@ -1,6 +1,6 @@
 with open("mariadb_ip", "r") as f:
     database_ip = f.readline()
 
-print(database_ip)
+database_ip = database_ip.replace(" ", "")
 
-print(str(database_ip))
+print(database_ip)
