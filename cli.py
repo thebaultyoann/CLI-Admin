@@ -118,44 +118,57 @@ def user_add_command(
         
 @user_app.command("get")
 @login_required
-def user_get_command(username:str) -> None:
+def user_get_command(
+     username:Annotated[str, typer.Argument(help="Username of the user")]
+    ) -> None:
     session = connect_to_db()
     user_get(session=session, username=username)
 
 @user_app.command("delete")
 @login_required
-def user_delete_command(username:str) -> None:
+def user_delete_command(
+    username:Annotated[str, typer.Argument(help="Username of the user")]
+    ) -> None:
     session = connect_to_db()
     user_delete(session=session, username=username)
 
 @user_app.command('update')
 @login_required
 def user_update_command(
-    username:str, 
+    username:Annotated[str, typer.Argument(help="Username of the user")],
     newUsername:Annotated[str, typer.Option(
             "--newusername",
-            "-u")
+            "-u",
+            help ="New username of the user")
         ]=None,
     newPassword: Annotated[str, typer.Option(
             "--newpassword",
             "-pw",
+            help = "New password of the user",
             hide_input=True)
         ]=None, 
     activate: Annotated[bool, typer.Option(
             "--activate/--deactivate",
-            "-a/-d")
+            "-a/-d",
+            help="New state of the user")
         ]=None,
     expirationDate : Annotated[str, typer.Option(
             "--expirationdate",
-            "-expd")
+            "-expd",
+            help="New expiration date of the user, format : yyyy-mm-dd")
         ]=None
     ) -> None:
+    """
+    Update user information inside the database. Each argument is optional
+    """
     session = connect_to_db()
     user_update(session=session, username=username, newUsername = newUsername, password=newPassword, activated=activate, expirationDate=expirationDate)
         
 @user_app.command('activate')
 @login_required
-def user_activate_command(username:str) -> None:
+def user_activate_command(
+    username:Annotated[str, typer.Argument(help="Username of the user")]
+    ) -> None:
     """
     Activate a user inside the database
     """
@@ -164,7 +177,9 @@ def user_activate_command(username:str) -> None:
 
 @user_app.command('deactivate')
 @login_required
-def user_deactivate_command(username:str) -> None:
+def user_deactivate_command(
+    username:Annotated[str, typer.Argument(help="Username of the user")]
+    ) -> None:
     """
     Deactivate a user inside the database
     """
