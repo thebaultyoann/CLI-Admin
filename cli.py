@@ -81,6 +81,10 @@ def login(
         hide_input=True, 
         help="Password to connect to the db (if you want to hide password : not to input)")]
     ) -> None: 
+    '''
+        Connect you to the CLI.
+        Automatic disconnection in 10 minutes
+    '''
     #password = get_password_hash(password)  #1st hash of the admin password stored in an env variable
     if user_authentificated(username=username, password=password):
         os.putenv('username',f'{username}')
@@ -463,12 +467,11 @@ def connect_to_db():
     return session
 
 def auto_logout():
-    time.sleep(300)
+    time.sleep(600)
     os.putenv('username', '')
     os.putenv('password', '')
     typer.secho(f"You are now disconnected, if you want to keep using the CLI you need to reconnect", fg=typer.colors.RED)
     os.system('bash')
-    return exit
 
 if __name__ == "__main__":
     app()
