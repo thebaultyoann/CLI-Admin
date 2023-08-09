@@ -440,13 +440,13 @@ def connect_to_db():
     #password = get_password_hash(password) #2nd hash of the admin password used to connect to the DB
     global database_ip
     global database_name
-    db : Session = database.start_a_db_session(
+    session = database.start_a_db_session(
         DB_Username_For_Admin=username,
         DB_Password_For_Admin=password,
         DB_Name_For_Users_Tables=database_name,
         DB_Container_Name=database_ip
         )
-    return db
+    return session
 
 def auto_logout():
     time.sleep(300)
