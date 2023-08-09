@@ -32,7 +32,7 @@ pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 with open("mariadb_ip", "r") as f:
     database_ip = f.readline()
 
-typer.secho(database_ip)
+database_ip = database_ip.rstrip()
 
 database_name = "espf_users"
 #database_ip = get_container_ip(database_name)
