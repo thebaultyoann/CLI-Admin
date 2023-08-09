@@ -1,6 +1,6 @@
 from sqlalchemy import create_engine, Column, Integer, String, Boolean, Date
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import sessionmaker, Session
 
 Base = declarative_base()
 
@@ -38,16 +38,16 @@ def test_credentials(
     return
 
 ################  ALL REQUESTS INSIDE THE DB ################
-def get_all_users(session):
+def get_all_users(session: Session):
     return session.query(User).all()
 
-def get_a_single_user(session, username):
+def get_a_single_user(session: Session, username):
     return session.query(User).filter(User.username == username).first()
      
-def get_users_by_activation(session,status):
+def get_users_by_activation(session: Session,status):
     return session.query(User).filter((User.activated == status)).all()
 
-def delete_user(session, username):
+def delete_user(session: Session, username):
     user = session.query(User).filter(User.username == username).first()
     if user:
         session.delete(user)
@@ -56,7 +56,7 @@ def delete_user(session, username):
     else:
         return None
 
-def add_user(session, username, password, activated):
+def add_user(session: Session, username, password, activated):
     user = session.query(User).filter(User.username == username).first()
     if user:
         return False
@@ -66,7 +66,7 @@ def add_user(session, username, password, activated):
         session.commit()
         return True
     
-def update_user_username(session, username, newUsername):
+def update_user_username(session: Session, username, newUsername):
     user = session.query(User).filter(User.username == username).first()
     if user:
         user.username = newUsername
@@ -75,7 +75,7 @@ def update_user_username(session, username, newUsername):
         return True
     return False
 
-def update_user_password(session, username, password):
+def update_user_password(session: Session, username, password):
     user = session.query(User).filter(User.username == username).first()
     if user:
         user.password = password
@@ -83,7 +83,7 @@ def update_user_password(session, username, password):
         return True
     return False
 
-def update_user_activated(session, username, activated):
+def update_user_activated(session: Session, username, activated):
     user = session.query(User).filter(User.username == username).first()
     if user:
         user.activated = activated
@@ -91,16 +91,17 @@ def update_user_activated(session, username, activated):
         return True
     return False
 
-def update_user_expiration_date(session, username, expirationDate):
+def update_user_expiration_date(session: Session, username, expirationDate):
     user = session.query(User).filter(User.username == username).first()
     if user:
         user.expiration_date = expirationDate
+        session.add(user)
         session.commmit()
         return True
     return False
 
 
-def activate_user(session, username):
+def activate_user(session: Session, username):
     user = session.query(User).filter(User.username == username).first()
     if user.activated == False:
         user.activated = True
@@ -110,7 +111,7 @@ def activate_user(session, username):
     else:
         return False
 
-def deactivate_user(session, username):
+def deactivate_user(session: Session, username):
     user = session.query(User).filter(User.username == username).first()
     if user.activated == True:
         user.activated = False
@@ -120,13 +121,13 @@ def deactivate_user(session, username):
     else:
         return False
 
-def check_expiration_date(session, username, expirationDate):
+def check_expiration_date(session: Session, username, expirationDate):
     user = session.query(User).filter(User.username == username).first()
     if not user.expiration_date or user.expiration_date >= expirationDate:
         return False
     return True
 
-def change_expiration_date(session, username, expirationDate):
+def change_expiration_date(session: Session, username, expirationDate):
     user = session.query(User).filter(User.username == username).first()
     user.expiration_date = expirationDate
     session.add(user)
