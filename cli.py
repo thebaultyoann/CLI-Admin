@@ -2,6 +2,7 @@ import typer
 from functools import wraps
 from typing_extensions import Annotated
 from passlib.context import CryptContext
+from sqlalchemy.orm import Session
 import os
 import time
 import datetime
@@ -143,7 +144,7 @@ def user_update_command(
             "-expd")
         ]=None
     ) -> None:
-    session = connect_to_db()
+    session : Session = typer.Depends(connect_to_db())
     user_update(session=session, username=username, newUsername = newUsername, password=newPassword, activated=deactivate, expirationDate=expirationDate)
         
 @user_app.command('activate')
@@ -243,7 +244,7 @@ def user_delete(session, username:str):
     else: 
         typer.secho("This user doesn't exist", fg=typer.colors.RED)
 
-def user_update(session, username:str, newUsername:str, password:str,  activated:bool, expirationDate:datetime.date):
+def user_update(session:Session, username:str, newUsername:str, password:str,  activated:bool, expirationDate:datetime.date):
     if newUsername:
         if database.update_user_username(session=session, username=username, newUsername=newUsername):
             typer.secho(f"User {username} is now {newUsername}", fg=typer.colors.GREEN)
@@ -343,13 +344,13 @@ def connect_to_db():
     #password = get_password_hash(password) #2nd hash of the admin password used to connect to the DB
     global database_ip
     global database_name
-    session=database.start_a_db_session(
+    db : Session = typer.Depends(database.start_a_db_session(
         DB_Username_For_Admin=username,
         DB_Password_For_Admin=password,
         DB_Name_For_Users_Tables=database_name,
         DB_Container_Name=database_ip
-        )
-    return session
+        ))
+    return db
 
 def auto_logout():
     time.sleep(300)
