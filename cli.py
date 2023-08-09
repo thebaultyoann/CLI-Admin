@@ -295,7 +295,7 @@ def user_activate(session, username:str):
 
 def user_deactivate(session, username:str):
     if database.deactivate_user(session=session, username=username):
-        return typer.secho(f"User {username} was deactivated")
+        return typer.secho(f"User {username} was deactivated", fg=typer.colors.GREEN)
     return typer.secho(f"Unsuccesfull deactivation of the user {username}", fg=typer.colors.RED)
 
 def user_change_expiration_date(session, username:str, expirationDate:datetime.date):
