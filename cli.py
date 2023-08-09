@@ -79,7 +79,7 @@ def login(
         "--password",
         prompt=True, 
         hide_input=True, 
-        help="Password to connect to the db")]
+        help="Password to connect to the db (if you want to hide password : not to input)")]
     ) -> None: 
     #password = get_password_hash(password)  #1st hash of the admin password stored in an env variable
     if user_authentificated(username=username, password=password):
@@ -172,13 +172,13 @@ def user_update_command(
     newPassword: Annotated[str, typer.Option(
             "--newpassword",
             "-pw",
-            help = "New password of the user (if you want to hide password :  no input)",
+            help = "New password of the user (if you want to hide password :  not to input)",
             hide_input=True)
         ]=None, 
     activate: Annotated[bool, typer.Option(
             "--activate/--deactivate",
             "-a/-d",
-            help="New state of the user (no input)")
+            help="New state of the user (not to input)")
         ]=None,
     expirationDate : Annotated[str, typer.Option(
             "--expirationdate",
