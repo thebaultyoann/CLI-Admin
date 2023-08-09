@@ -300,10 +300,7 @@ def convert_string_to_date(date):
     try:
         day, month, year = map(int, date('/'))
         new_date = datetime.date(year, month, day)
-        if new_date.year == year and new_date.month == month and new_date.day == day:
-            return new_date
-        else:
-            return None
+        return new_date
     except (ValueError, AttributeError):
         return None
     except:
