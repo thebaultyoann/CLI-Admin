@@ -257,7 +257,7 @@ def user_delete(session, username:str):
     else : 
         typer.secho(f"Deletion of {user.username} cancelled", fg=typer.colors.RED)
 
-def user_update(session:Session, username:str, newUsername:str, password:str,  activated:bool, expirationDate:datetime.date):
+def user_update(session, username:str, newUsername:str, password:str,  activated:bool, expirationDate:datetime.date):
     check_username(session, username)
     check=[]
     if newUsername:
