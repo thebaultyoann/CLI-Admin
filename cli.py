@@ -61,7 +61,7 @@ def user_authentificated(username:str, password:str):
         global database_name
         database.test_credentials(
             DB_Username_For_Admin=username,
-            DB_Password_For_Admin=password,
+            DB_Password_For_Admin=password[:32],
             DB_Name_For_Users_Tables=database_name,
             DB_Container_Name=database_ip
         )   
@@ -459,12 +459,12 @@ def get_password_hash(password):
 def connect_to_db():
     username=os.getenv('username')  
     password=os.getenv('password')
-    #password = get_password_hash(password) #2nd hash of the admin password used to connect to the DB
+    password = get_password_hash(password) #2nd hash of the admin password used to connect to the DB
     global database_ip
     global database_name
     session = database.start_a_db_session(
         DB_Username_For_Admin=username,
-        DB_Password_For_Admin=password,
+        DB_Password_For_Admin=password[:32],
         DB_Name_For_Users_Tables=database_name,
         DB_Container_Name=database_ip
         )
