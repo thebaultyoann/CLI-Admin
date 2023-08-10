@@ -14,6 +14,8 @@ source $SCRIPT_DIR/venv/bin/activate
 
 sudo pip install -r cli_requirements.txt 
 
+sudo bash $SCRIPT_DIR/get_mariadb_ip.sh
+
 PYTHON_EXECUTABLE="python3"
     
 MAIN_SCRIPT="$SCRIPT_DIR/cli.py"
@@ -26,4 +28,4 @@ echo "$alias_command" >> ~/.bashrc
 
 source ~/.bashrc
 
-sudo bash $SCRIPT_DIR/get_mariadb_ip.sh
+
