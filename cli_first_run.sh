@@ -5,8 +5,7 @@ sudo wget https://downloads.mariadb.com/Connectors/c/connector-c-3.3.5/mariadb-c
 sudo echo "export LD_LIBRARY_PATH=/usr/lib/mariadb" >> ~/.bashrc
 source ~/.bashrc
 
-python3 -m venv venv
-
+sudo python3 -m venv venv
 
 source venv/bin/activate
 pip install -r cli_requirements.txt
