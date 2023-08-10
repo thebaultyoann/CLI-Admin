@@ -14,7 +14,7 @@ source $SCRIPT_DIR/venv/bin/activate
 
 sudo pip install -r cli_requirements.txt 
 
-sudo docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' mariadb > $SCRIPT_DIR/mariadb_ip
+sudo bash $SCRIPT_DIR/get_mariadb_ip_for_first_script.sh $SCRIPT_DIR
 
 PYTHON_EXECUTABLE="python3"
     
