@@ -10,11 +10,11 @@ source ~/.bashrc
 
 sudo python3 -m venv venv
 
-source $SCRIPT_DIR/venv/bin/activate
+source $SCRIPT_DIR/venv/bin/activate 
 
 sudo pip install -r cli_requirements.txt 
 
-sudo bash $SCRIPT_DIR/get_mariadb_ip.sh
+sudo docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' mariadb > $SCRIPT_DIR/mariadb_ip
 
 PYTHON_EXECUTABLE="python3"
     
