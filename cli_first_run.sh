@@ -5,16 +5,15 @@ sudo wget https://downloads.mariadb.com/Connectors/c/connector-c-3.3.5/mariadb-c
 echo "export LD_LIBRARY_PATH=/usr/lib/mariadb" >> ~/.bashrc
 source ~/.bashrc
 
+python3 -m venv venv
 
-SCRIPT_DIR="~/CLI-Admin-test"
-
-python3 -m venv $SCRIPT_DIR/venv
-
-source $SCRIPT_DIR/venv/bin/activate
-pip install -r $SCRIPT_DIR/cli_requirements.txt 
+source venv/bin/activate
+pip install -r cli_requirements.txt
 
 PYTHON_EXECUTABLE="python3"
 
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+    
 MAIN_SCRIPT="$SCRIPT_DIR/cli.py"
 
 alias_command="alias cli=\"$PYTHON_EXECUTABLE $MAIN_SCRIPT\""
@@ -25,4 +24,4 @@ echo "$alias_command" >> ~/.bashrc
 
 source ~/.bashrc
 
-sudo bash $SCRIPT_DIR/get_mariadb_ip.sh
+sudo bash ~/CLI-Admin-test/get_mariadb_ip.sh
