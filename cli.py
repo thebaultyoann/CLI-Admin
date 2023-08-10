@@ -55,7 +55,7 @@ def user_authentificated(username:str, password:str):
     if username==None or password==None:
         typer.secho(f"You need to login", fg=typer.colors.RED)
         return False
-    #password = get_password_hash(password) #2nd hash of the admin password used to connect to the DB
+    password = get_password_hash(password)
     try: 
         global database_ip
         global database_name
@@ -89,7 +89,7 @@ def login(
         Connect you to the CLI.
         Automatic disconnection in 10 minutes
     '''
-    #password = get_password_hash(password)  #1st hash of the admin password stored in an env variable
+    password = get_password_hash(password)
     if user_authentificated(username=username, password=password):
         os.putenv('username',f'{username}')
         os.putenv('password',f'{password}')
