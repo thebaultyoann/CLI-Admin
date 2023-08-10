@@ -26,4 +26,4 @@ echo "$alias_command" >> ~/.bashrc
 
 source ~/.bashrc
 
-sudo bash get_mariadb_ip.sh
+sudo bash $SCRIPT_DIR/get_mariadb_ip.sh
