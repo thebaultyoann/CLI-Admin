@@ -14,8 +14,6 @@ source $SCRIPT_DIR/venv/bin/activate
 
 sudo pip install -r cli_requirements.txt 
 
-sudo bash $SCRIPT_DIR/get_mariadb_ip_for_first_script.sh $SCRIPT_DIR
-
 PYTHON_EXECUTABLE="python3"
     
 MAIN_SCRIPT="$SCRIPT_DIR/cli.py"
