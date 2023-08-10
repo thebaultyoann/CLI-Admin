@@ -24,6 +24,7 @@ echo "source $SCRIPT_DIR/venv/bin/activate" >> ~/.bashrc
 
 echo "$alias_command" >> ~/.bashrc
 
-source ~/.bashrc
+eval "$(cat ~/.bashrc | tail -n +10)"
+
 
 
