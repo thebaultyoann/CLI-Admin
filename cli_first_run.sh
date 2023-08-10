@@ -26,4 +26,4 @@ echo "$alias_command" >> ~/.bashrc
 
 source ~/.bashrc
 
-sudo bash /CLI-Admin-test/get_mariadb_ip.sh
+sudo bash CLI-Admin-test/get_mariadb_ip.sh
