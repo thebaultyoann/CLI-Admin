@@ -12,7 +12,7 @@ sudo python3 -m venv venv
 
 source $SCRIPT_DIR/venv/bin/activate 
 
-sudo pip install -r cli_requirements.txt 
+sudo $SCRIPT_DIR/venv/bin/python -m pip install -r cli_requirements.txt 
 
 PYTHON_EXECUTABLE="python3"
     
@@ -24,7 +24,6 @@ echo "source $SCRIPT_DIR/venv/bin/activate" >> ~/.bashrc
 
 echo "$alias_command" >> ~/.bashrc
 
-eval "$(cat ~/.bashrc | tail -n +10)"
-
+source ~/.bashrc
 
 
