@@ -3,3 +3,4 @@ sqlalchemy>=2.0.15
 mariadb
 passlib
 docker
+pyotp
