@@ -29,7 +29,7 @@ pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 #     except docker.errors.NotFound:
 #         return None
 
-with open("mariadb_ip", "r") as f:
+with open("~/CLI-Admin-test/mariadb_ip", "r") as f:
     database_ip = f.readline()
 
 database_ip = database_ip.rstrip()
