@@ -57,12 +57,14 @@ def user_authentificated(username:str, password:str):
         typer.secho(f"You need to login", fg=typer.colors.RED)
         return False
     password = get_password_hash(password)
+    password = password[:32]
+    print(password)
     try: 
         global database_ip
         global database_name
         database.test_credentials(
             DB_Username_For_Admin=username,
-            DB_Password_For_Admin=password[:32],
+            DB_Password_For_Admin=password,
             DB_Name_For_Users_Tables=database_name,
             DB_Container_Name=database_ip
         )   
