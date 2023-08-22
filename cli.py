@@ -55,7 +55,7 @@ def login_required(function):
 def user_authentificated(username:str, password:str):
     if username==None or password==None:
         typer.secho(f"You need to login", fg=typer.colors.RED)
-        return False
+        return False    
     try: 
         global database_ip
         global database_name
@@ -279,6 +279,7 @@ def user_list(session):
     return True
 
 def user_add(session, username:str, password:str, activated:bool, expirationDate:str):
+    password = get_password_hash(password)
     if expirationDate: 
         expirationDate = convert_string_to_date(expirationDate)
         if not expirationDate:
@@ -343,7 +344,8 @@ def user_update(session, username:str, newUsername:str, password:str,  activated
         else:
             typer.secho(f"User {username} : the new expiration date is before today. If you want to perform this operation use the command changedate",fg=typer.colors.RED)
             check.append(4)
-    if password:      
+    if password:
+        password = get_password_hash(password)        
         if database.update_user_password(session=session, username=username, password=password):
             typer.secho(f"User {username} password has been changed", fg=typer.colors.GREEN)
         else: 
@@ -399,6 +401,7 @@ def user_change_expiration_date(session, username:str, expirationDate:str):
 
 def user_change_password(session, username, password):
     check_username(session, username)
+    password = get_password_hash(password)
     if database.user_change_password(session=session, username=username, password=password):
         typer.secho(f"Password of {username} was changed", fg=typer.colors.GREEN)
     else:
